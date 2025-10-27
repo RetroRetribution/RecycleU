@@ -1,0 +1,139 @@
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f6f8f4;
+    color: #334;
+    height: 100vh;
+}
+
+/* Layout */
+.street-map-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+
+.street-map-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(85%) brightness(92%);
+}
+
+/* Soft Green Glow Area */
+.green-glow {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  width: 350px;
+  height: 350px;
+  margin-left: -175px;
+  margin-top: -175px;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(130, 200, 155, 0.38) 0%,
+    rgba(130, 200, 155, 0.22) 38%,
+    rgba(130, 200, 155, 0.10) 60%,
+    rgba(255,255,255,0) 100%
+  );
+  filter: blur(14px);
+}
+
+
+/* ✨ Sprouting / Flicker Speckles */
+.green-glow::before,
+.green-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  background-repeat: repeat;
+  background-size: 6px 6px;
+  animation: speckleFlicker 5s infinite ease-in-out;
+  opacity: 0.35;
+}
+
+/* Smaller closer speckles */
+.green-glow::before {
+  background-image:
+    radial-gradient(circle, rgba(130,200,155,0.65) 45%, transparent 50%);
+  filter: blur(1px);
+  animation-duration: 4.4s;
+}
+
+/* Larger, further speckles */
+.green-glow::after {
+  background-image:
+    radial-gradient(circle, rgba(130,200,155,0.35) 40%, transparent 55%);
+  filter: blur(2px);
+  animation-duration: 6.2s;
+}
+
+/* Flicker animation */
+@keyframes speckleFlicker {
+  0%   { opacity: 0.20; transform: scale(1); }
+  35%  { opacity: 0.50; transform: scale(1.03); }
+  60%  { opacity: 0.32; transform: scale(0.97); }
+  100% { opacity: 0.20; transform: scale(1); }
+}
+
+/* Pin Marker */
+.drop-pin {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  width: 34px;
+  height: 34px;
+  background: #88c99b;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 0 14px rgba(130,200,155,0.5);
+  animation: pinFloat 2.8s ease-in-out infinite;
+}
+
+.drop-pin::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+}
+
+/* Floating animation */
+@keyframes pinFloat {
+  0%, 100% { transform: translateY(0) rotate(-45deg); }
+  50% { transform: translateY(-6px) rotate(-45deg); }
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #d5e4d8;
+  background: #eef5f0;
+}
+
+.bottom-nav .nav-item {
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px;
+  color: #4a6b52;
+  transition: 0.25s;
+}
+
+.bottom-nav .nav-item:hover,
+.bottom-nav .nav-item.active {
+  color: #2f7d54;
+}
