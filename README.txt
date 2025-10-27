@@ -8,3 +8,8 @@
 #https://getbootstrap.com/
 #w3schools.com/html/default.asp
 ##w3schools.com/css/default.asp
+
+#To update the point.html rank (In browser console)
+#updatePoint(25, 'sprout');   // 25% - sprout
+#updatePoint(60, 'sapling');  // 60% - sapling
+#updatePoint(95, 'tree');     // 95% - tree

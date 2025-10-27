@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drop Point</title>
+  <link rel="stylesheet" href="point.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo">LOGO</div>
+  </header>
+
+  <main class="content">
+    <!-- Progress Ring -->
+    <div id="ring" class="progress-ring" style="--progress: 220deg;" data-stage="sapling">
+      <div class="icon">
+        <!-- Sprout -->
+        <svg class="sprout" viewBox="0 0 64 64" aria-hidden="true">
+          <g fill="none" stroke="#7dbf92" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M32 46v-8" />
+            <path d="M32 38c-6 0-12-6-12-12 8 0 12 6 12 12z" fill="#9fd4b1" />
+            <path d="M32 38c6 0 12-6 12-12-8 0-12 6-12 12z" fill="#9fd4b1" />
+          </g>
+        </svg>
+
+        <!-- Sapling -->
+        <svg class="sapling" viewBox="0 0 64 64" aria-hidden="true">
+          <g fill="none" stroke="#6db487" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M32 50V32" />
+            <path d="M32 38c-9 0-16-7-16-16 11 0 16 7 16 16z" fill="#9fd4b1"/>
+            <path d="M32 32c7 0 14-6 14-14-10 0-14 6-14 14z" fill="#9fd4b1"/>
+            <path d="M32 40c4 0 10 4 12 10" />
+          </g>
+        </svg>
+
+        <!-- Tree -->
+        <svg class="tree" viewBox="0 0 64 64" aria-hidden="true">
+          <g fill="none" stroke="#5ca77b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M32 54V34" />
+            <path d="M32 22c-10 0-18 8-18 18 0 6 4 10 10 10h16c6 0 10-4 10-10 0-10-8-18-18-18z" fill="#9fd4b1"/>
+            <path d="M32 22c-6 0-10-5-10-10 7 0 10 5 10 10z" fill="#9fd4b1"/>
+            <path d="M32 22c6 0 10-5 10-10-7 0-10 5-10 10z" fill="#9fd4b1"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <h1 class="name">Millennium City Mall</h1>
+    <p class="rank">Community Level: <span id="level">2</span></p>
+    <p class="about">This drop point grows as people contribute. Keep it going!</p>
+  </main>
+
+  <div class="bottom-nav">
+    <div class="nav-item">Map</div>
+    <div class="nav-item active">Profile</div>
+    <div class="nav-item">Rewards</div>
+  </div>
+
+  <!-- Minimal JS to update progress smoothly -->
+  <script>
+    // Set progress 0–100 and stage: 'sprout' | 'sapling' | 'tree'
+    function updatePoint(percent, stage) {
+      const ring = document.getElementById('ring');
+      const level = document.getElementById('level');
+      const clamped = Math.max(0, Math.min(100, percent));
+      const deg = (clamped / 100) * 360;
+      ring.style.setProperty('--progress', deg + 'deg');
+      ring.setAttribute('data-stage', stage);
+      level.textContent = stage === 'tree' ? 3 : stage === 'sapling' ? 2 : 1;
+    }
+
+    // DEMO: comment this out if you don’t want an initial ease-in from 0→current
+    (function demoEaseIn(){
+      const ring = document.getElementById('ring');
+      const target = 220; // degrees (matches inline style)
+      ring.style.setProperty('--progress', '0deg');
+      setTimeout(()=> ring.style.setProperty('--progress', target + 'deg'), 50);
+    })();
+
+    // Example usage you can trigger from console:
+    // updatePoint(15, 'sprout');  // 15% filled
+    // updatePoint(55, 'sapling'); // 55% filled
+    // updatePoint(90, 'tree');    // 90% filled
+  </script>
+</body>
+</html>
