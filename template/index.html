@@ -1,28 +1,35 @@
 <!DOCTYPE html>
 <html>
- <head> <title> REcyclo Login </title> <link rel="stylesheet" href="/static/styles.css">
- </head>
+<head>
+    <title>RecycleU Login</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
 <body>
     <header>
-        <h1 class="Logo">Test Logo</h1>
+        <h1 class="Logo">RecycleU</h1>
     </header>
-    <div class = box>
+    <div class="box">
         <div class="Lr">
             Login or register
         </div>
 
         <div class="email space">
-            <input type="email" placeholder="Email">
+            <input type="email" id="email-input" placeholder="Email">
         </div>
 
         <div class="password space">
-            <input type="password" placeholder="Password">
+            <input type="password" id="password-input" placeholder="Password">
         </div>
         
         <div class="remember me">
             <input type="checkbox"> Remember me <a href="#">Forget Password?</a>
         </div>
-        <button type="submit">Confirm</button>
+        <button type="submit" onclick="handleLogin()">Confirm</button>
+
+        <!-- Profile Section -->
+        <div id="profile-content"></div>
     </div>
+
+    <script src="/static/app.js"></script>
 </body>
 </html>
