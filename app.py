@@ -4,10 +4,53 @@ import datetime
 app = Flask(__name__, template_folder='template', static_folder='static')
 
 
+# ---------------------------
+# FRONTEND PAGE ROUTES (ADDED)
+# ---------------------------
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
+@app.route('/profile')
+def profile_page():
+    return render_template('profile.html')
+
+
+@app.route('/point')
+def point_page():
+    return render_template('point.html')
+
+
+@app.route('/reward')
+def reward_page():
+    return render_template('reward.html')
+
+
+@app.route('/redeem')
+def redeem_page():
+    return render_template('redeem.html')
+
+
+@app.route('/qr')
+def qr_page():
+    return render_template('qr.html')
+
+
+@app.route('/street')
+def street_page():
+    return render_template('street.html')
+
+
+@app.route('/about')
+def about_page():
+    return render_template('about.html')
+
+
+# ---------------------------
+# API ROUTES (UNCHANGED)
+# ---------------------------
 
 @app.route('/api/status')
 def status():
@@ -121,6 +164,10 @@ def about():
     }
     return jsonify(data)
 
+
+# ---------------------------
+# RUN SERVER
+# ---------------------------
 
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.1', port=5000)
