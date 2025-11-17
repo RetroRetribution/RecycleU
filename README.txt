@@ -13,3 +13,11 @@
 #updatePoint(25, 'sprout');   // 25% - sprout
 #updatePoint(60, 'sapling');  // 60% - sapling
 #updatePoint(95, 'tree');     // 95% - tree
+
+http://127.0.0.1:5000/profile
+http://127.0.0.1:5000/points
+http://127.0.0.1:5000/rewards
+http://127.0.0.1:5000/redeem
+http://127.0.0.1:5000/qr
+http://127.0.0.1:5000/street
+http://127.0.0.1:5000/about
