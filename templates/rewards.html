@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RecycleU - Rewards</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='reward.css') }}">
 </head>
 <body>
 
@@ -26,11 +26,42 @@
     <div class="reward-container">
         <h1 class="page-title">Rewards</h1>
 
-        <!-- BODY (now dynamic) -->
+        <!-- STATIC REWARD CARDS (smooth with JS) -->
         <div class="reward-body">
-            <div id="rewards-list" class="reward-grid">
-                <!-- JavaScript will insert dynamic reward cards here -->
+
+            <div class="reward-card" data-name="Eco Hoodie" data-cost="1000">
+                <div class="reward-main">
+                    <h2>Eco Hoodie</h2>
+                    <p>Cost: 1000 points</p>
+                    <button class="redeem-btn">Redeem</button>
+                </div>
+                <div class="reward-details">
+                    A soft hoodie made from 100% recycled fabrics. Stay warm, stay green.
+                </div>
             </div>
+
+            <div class="reward-card" data-name="Plantable Notebook" data-cost="250">
+                <div class="reward-main">
+                    <h2>Plantable Notebook</h2>
+                    <p>Cost: 250 points</p>
+                    <button class="redeem-btn">Redeem</button>
+                </div>
+                <div class="reward-details">
+                    Eco-friendly notebook embedded with wildflower seeds.
+                </div>
+            </div>
+
+            <div class="reward-card" data-name="Metal Bottle" data-cost="500">
+                <div class="reward-main">
+                    <h2>Recycled Metal Bottle</h2>
+                    <p>Cost: 500 points</p>
+                    <button class="redeem-btn">Redeem</button>
+                </div>
+                <div class="reward-details">
+                    Durable metal flask built from recycled materials.
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -38,7 +69,7 @@
     <footer class="bottomnav">
         <a href="/profile">Profile</a>
         <a href="/points">Points</a>
-        <a href="/reward" class="active">Rewards</a>
+        <a href="/rewards" class="active">Rewards</a>
         <a href="/redeem">Redeem</a>
         <a href="/qr">QR</a>
         <a href="/street">Street</a>
@@ -46,7 +77,7 @@
     </footer>
 
     <!-- JS -->
-    <script src="/static/rewards.js"></script>
+    <script src="{{ url_for('static', filename='rewards.js') }}"></script>
 
 </body>
 </html>
