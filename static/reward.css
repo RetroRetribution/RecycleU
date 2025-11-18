@@ -72,3 +72,48 @@ body {
   padding: 10px;
 
 }
+
+.reward-card {
+  border-radius: 12px;
+  border: 1px solid #d5e6d7;
+  padding: 16px;
+  margin-bottom: 12px;
+  background: #f8fcf8;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.reward-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.reward-card.selected {
+  border-color: #6db487;
+  box-shadow: 0 0 0 2px rgba(109,180,135,0.3);
+}
+
+.reward-details {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #555;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.25s ease;
+}
+
+.redeem-btn {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: none;
+  background: #6db487;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.redeem-btn:hover {
+  background: #5ca77b;
+}
