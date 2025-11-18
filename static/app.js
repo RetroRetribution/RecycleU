@@ -1,6 +1,6 @@
 const API_BASE = 'http://127.0.0.1:5000';
 
-// Load profile data on page load
+
 document.addEventListener('DOMContentLoaded', () => {
     fetchProfileData();
 });
@@ -54,12 +54,12 @@ function handleLogin() {
         return;
     }
 
-    // Dummy login success
+
     alert(`Login successful as ${emailInput.value}`);
     console.log('Login attempt with:', emailInput.value);
 }
 
-// Optional: Fetch index/status data
+
 function fetchIndexData() {
     fetch(`${API_BASE}/api/status`)
         .then(response => response.json())
