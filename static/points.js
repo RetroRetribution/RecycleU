@@ -1,76 +1,68 @@
+let currentPercent = 55;
+let currentStage = "sapling";
+
+function updatePoint(percent, stage) {
+    const ring = document.getElementById("ring");
+    const level = document.getElementById("level");
+
+    const clamped = Math.max(0, Math.min(100, percent));
+    const deg = (clamped / 100) * 360;
+
+    ring.style.setProperty("--progress", deg + "deg");
+    setStage(stage);
+
+    const levelMap = { sprout: 1, sapling: 2, tree: 3 };
+    level.textContent = levelMap[stage] || 1;
+
+    currentPercent = clamped;
+    currentStage = stage;
+}
+
+function setStage(stage) {
+    const ring = document.getElementById("ring");
+    ring.setAttribute("data-stage", stage);
+}
+
+function addPoints(amount) {
+    let newPercent = currentPercent + amount;
+    let newStage = currentStage;
+
+    if (newPercent >= 75) newStage = "tree";
+    else if (newPercent >= 40) newStage = "sapling";
+    else newStage = "sprout";
+
+    updatePoint(newPercent, newStage);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-    // The container where point info will go
-    const summaryBox = document.getElementById("points-summary");
-    if (!summaryBox) {
-        console.error("points-summary element not found.");
-        return;
-    }
+    const ring = document.getElementById("ring");
+    ring.style.setProperty("--progress", "0deg");
+    setTimeout(() => {
+        updatePoint(currentPercent, currentStage);
+    }, 100);
+});
 
-    summaryBox.innerHTML = "<p>Loading point data...</p>";
+document.addEventListener("DOMContentLoaded", () => {
+    const ring = document.getElementById("ring");
+    ring.style.setProperty("--progress", "0deg");
+    setTimeout(() => {
+        updatePoint(currentPercent, currentStage);
+    }, 100);
 
-    // Fetch the point data from Flask backend
-    fetch("/api/points")
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            // Validate structure
-            if (!data || typeof data.total === "undefined") {
-                throw new Error("Invalid data structure returned from API");
-            }
+    // Button bindings
+    document.getElementById("sproutBtn").addEventListener("click", () => {
+        updatePoint(10, "sprout");
+    });
 
-            const total = data.total;
-            const earned = data.earned;
-            const spent = data.spent;
-            const history = data.history || [];
+    document.getElementById("saplingBtn").addEventListener("click", () => {
+        updatePoint(50, "sapling");
+    });
 
-            // Determine progress stage
-            const percent = Math.min(100, (total / 2000) * 100);
-            let stage = "sprout";
-            if (percent >= 80) stage = "tree";
-            else if (percent >= 40) stage = "sapling";
+    document.getElementById("treeBtn").addEventListener("click", () => {
+        updatePoint(90, "tree");
+    });
 
-            // Call the existing function in point.html
-            if (typeof updatePoint === "function") {
-                updatePoint(percent, stage);
-            }
-
-            // Build history list
-            const historyHTML = history
-                .map(
-                    (entry) => `
-                <li>
-                    <strong>${entry.date}</strong> — 
-                    <span style="color:${entry.change > 0 ? "green" : "red"};">
-                        ${entry.change > 0 ? "+" : ""}${entry.change}
-                    </span>
-                    <em> (${entry.source})</em>
-                </li>
-            `
-                )
-                .join("");
-
-            // Render into page
-            summaryBox.innerHTML = `
-                <h3>Your Points</h3>
-                <p><strong>Total:</strong> ${total}</p>
-                <p><strong>Earned:</strong> ${earned}</p>
-                <p><strong>Spent:</strong> ${spent}</p>
-
-                <h3>History</h3>
-                <ul>${historyHTML}</ul>
-            `;
-        })
-        .catch((err) => {
-            console.error("Error loading point data:", err);
-            summaryBox.innerHTML = `
-                <p style="color:red;">
-                    Unable to load point data.  
-                    (${err.message})
-                </p>
-            `;
-        });
+    document.getElementById("addBtn").addEventListener("click", () => {
+        addPoints(10);
+    });
 });

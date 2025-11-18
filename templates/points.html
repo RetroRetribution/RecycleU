@@ -52,6 +52,14 @@
     <p class="about">This drop point grows as people contribute. Keep it going!</p>
   </main>
 
+<div class="point-controls">
+  <button id="sproutBtn">Sprout</button>
+  <button id="saplingBtn">Sapling</button>
+  <button id="treeBtn">Tree</button>
+  <button id="addBtn">+10 Points</button>
+</div>
+
+
   <div class="bottom-nav">
     <div class="nav-item">Map</div>
     <div class="nav-item active">Profile</div>
@@ -60,7 +68,6 @@
 
   <!-- Minimal JS to update progress smoothly -->
   <script>
-    // Set progress 0–100 and stage: 'sprout' | 'sapling' | 'tree'
     function updatePoint(percent, stage) {
       const ring = document.getElementById('ring');
       const level = document.getElementById('level');
@@ -71,19 +78,14 @@
       level.textContent = stage === 'tree' ? 3 : stage === 'sapling' ? 2 : 1;
     }
 
-    // DEMO: comment this out if you don’t want an initial ease-in from 0→current
     (function demoEaseIn(){
       const ring = document.getElementById('ring');
-      const target = 220; // degrees (matches inline style)
+      const target = 220;
       ring.style.setProperty('--progress', '0deg');
       setTimeout(()=> ring.style.setProperty('--progress', target + 'deg'), 50);
     })();
+  </script>
 
-    // Example usage you can trigger from console:
-    // updatePoint(15, 'sprout');  // 15% filled
-    // updatePoint(55, 'sapling'); // 55% filled
-    // updatePoint(90, 'tree');    // 90% filled
-  </script> <script src="/static/points.js"></script>
-
+  <script src="{{ url_for('static', filename='points.js') }}"></script>
 </body>
 </html>

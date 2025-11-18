@@ -96,3 +96,26 @@ body {
 }
 
 .nav-item:hover, .nav-item.active { color: #2f7d54; }
+
+.point-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.point-controls button {
+  padding: 10px 14px;
+  border: none;
+  background: #6db487;
+  color: white;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.point-controls button:hover {
+  background: #5ca77b;
+  transform: scale(1.05);
+}
