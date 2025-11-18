@@ -29,7 +29,6 @@ def dummy():
 
 @app.route('/api/profile')
 def profile():
-    # Dummy user profile data
     data = {
         "id": 42,
         "name": "Alex Green",
@@ -46,7 +45,6 @@ def profile():
 
 @app.route('/api/points')
 def points():
-    # Dummy points history and summary
     data = {
         "total": 1240,
         "earned": 1400,
@@ -62,7 +60,6 @@ def points():
 
 @app.route('/api/rewards')
 def rewards():
-    # Catalog of rewards the frontend can display
     data = {
         "rewards": [
             {"id": 1, "name": "Reusable Bottle", "cost": 100, "stock": 12},
@@ -75,7 +72,6 @@ def rewards():
 
 @app.route('/api/redeem')
 def redeem():
-    # Dummy redemption options and past redemptions
     data = {
         "available": [
             {"id": 1, "name": "Reusable Bottle", "cost": 100},
@@ -90,7 +86,6 @@ def redeem():
 
 @app.route('/api/qr')
 def qr():
-    # Dummy QR payload: in a real app you'd return a URL, token or base64 image
     data = {
         "code": "QR_CODE_PLACEHOLDER_ABC123",
         "value": 50,
@@ -101,7 +96,6 @@ def qr():
 
 @app.route('/api/street')
 def street():
-    # Nearby drop-off locations / street collection info
     data = {
         "locations": [
             {"id": 1, "name": "Green St. Drop-Off", "address": "12 Green St", "hours": "8:00-18:00", "lat": 40.7128, "lng": -74.0060},

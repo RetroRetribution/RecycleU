@@ -10,7 +10,7 @@ Terminal run(PowerShell) :
 
 ```
 python -m venv env
-.\env\acripts\activate
+.\env\scripts\activate
 pip install -r requirements.txt
 python app.py
 ```
