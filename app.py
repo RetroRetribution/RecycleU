@@ -1,11 +1,20 @@
 from flask import Flask, render_template, jsonify
+from pymongo import MongoClient
+import datetime
 
-app = Flask(__name__, template_folder='templates', static_folder='static')
+# After taking time to figure MongoDB out, the follwing is the MongoDB setup
+client = MongoClient("mongodb://localhost:27017/")
+db = client["recycleU_db"]
 
-# ---------------------------------------
-#   TEMPLATE ROUTES (FINAL — CORRECT)
-# ---------------------------------------
+users_col = db["users"]
+points_col = db["points"]
+rewards_col = db["rewards"]
+redeem_col = db["redeem"]
+street_col = db["street"]
 
+app = Flask(__name__, template_folder='template', static_folder='static')
+
+# The template routes display the HTML pages
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -38,10 +47,7 @@ def street_page():
 def about_page():
     return render_template('about.html')
 
-# ---------------------------------------
-#              API ROUTES
-#   (Your teammate's work — UNTOUCHED)
-# ---------------------------------------
+# The API routes provide JSON data to the fronted-end of website
 
 @app.route('/api/status')
 def api_status():
@@ -52,62 +58,56 @@ def api_dummy():
     return jsonify({"message": "Hello from the backend!"})
 
 @app.route('/api/profile')
-def profile():
-    # Dummy user profile data
-    data = {
-        "id": 42,
-        "name": "Alex Green",
-        "email": "alex.green@example.com",
-        "joined": "2024-06-01",
-        "total_points": 1240,
-        "badges": [
-            {"name": "First Recycle", "earned": "2024-06-02"},
-            {"name": "Collector", "earned": "2025-01-15"}
-        ]
-    })
+def api_profile():
+    user = users_col.find_one({}, {"_id": 0})
+
+    if not user:
+        return jsonify({"error": "No profile found"}), 404
+
+    return jsonify(user)
+
+
 
 @app.route('/api/points')
 def points():
-    # Dummy points history and summary
-    data = {
-        "total": 1240,
-        "earned": 1500,
-        "spent": 260,
-        "history": [
-            {"date": "2025-01-14", "change": "+200", "source": "Bottle Return"},
-            {"date": "2025-01-10", "change": "+150", "source": "Paper Recycling"},
-            {"date": "2025-01-08", "change": "-100", "source": "Reward Purchase"},
-            {"date": "2024-12-29", "change": "+140", "source": "Glass Recycling"},
-        ]
-    })
+    # Fetch points data from MongoDB itself
+    data = points_col.find_one({}, {"_id": 0})
+    
+    if not data:
+        # Dummy data as fallback if MongoDB is empty
+        data = {
+            "total": 1240,
+            "earned": 1500,
+            "spent": 260,
+            "history": [
+                {"date": "2025-01-14", "change": "+200", "source": "Bottle Return"},
+                {"date": "2025-01-10", "change": "+150", "source": "Paper Recycling"},
+                {"date": "2025-01-08", "change": "-100", "source": "Reward Purchase"},
+                {"date": "2024-12-29", "change": "+140", "source": "Glass Recycling"},
+            ]
+        }
+    
+    return jsonify(data)
 
 @app.route('/api/rewards')
-def rewards():
-    # Catalog of rewards the frontend can display
-    data = {
-        "rewards": [
-            {"id": 1, "name": "Recycle Hoodie", "cost": 1000, "stock": 5},
-            {"id": 2, "name": "Eco Tote Bag", "cost": 700, "stock": 10},
-            {"id": 3, "name": "Metal Bottle", "cost": 500, "stock": 0}
-        ]
-    })
+def api_rewards():
+    rewards = list(rewards_col.find({}, {"_id": 0}))
+    return jsonify({"rewards": rewards})
+
 
 @app.route('/api/redeem')
-def redeem():
-    # Dummy redemption options and past redemptions
-    data = {
-        "available": [
-            {"id": 1, "name": "Reusable Bottle", "cost": 100},
-            {"id": 2, "name": "Plant a Tree", "cost": 200}
-        ],
-        "history": [
-            {"id": 1, "name": "Park Cleanup Pass", "redeemed_on": "2024-12-20"},
-        ]
-    })
+def api_redeem():
+    data = redeem_col.find_one({}, {"_id": 0})
+
+    if not data:
+        return jsonify({"error": "No redeem data found"}), 404
+
+    return jsonify(data)
+
 
 @app.route('/api/qr')
 def qr():
-    # Dummy QR payload: in a real app you'd return a URL, token or base64 image
+    # Dummy QR payload: in a real app you'd return a URL, this is for the sake of simplicity
     data = {
         "code": "QR_CODE_PLACEHOLDER_ABC123",
         "value": 50,
@@ -117,14 +117,10 @@ def qr():
 
 
 @app.route('/api/street')
-def street():
-    # Nearby drop-off locations / street collection info
-    data = {
-        "locations": [
-            {"name": "City Recycle Center", "address": "Main Street 12", "hours": "09:00–18:00"},
-            {"name": "Eco Drop-Off Point", "address": "Green Ave 44", "hours": "10:00–16:00"},
-        ]
-    })
+def api_street():
+    locations = list(street_col.find({}, {"_id": 0}))
+    return jsonify({"locations": locations})
+
 
 @app.route('/api/about')
 def api_about():
@@ -135,10 +131,6 @@ def api_about():
         "contact": "support@recycleu.app"
     })
 
-
-# ---------------------------------------
-#          RUN FLASK SERVER
-# ---------------------------------------
 
 if __name__ == '__main__':
     app.run(debug=True)
