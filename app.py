@@ -12,7 +12,7 @@ rewards_col = db["rewards"]
 redeem_col = db["redeem"]
 street_col = db["street"]
 
-app = Flask(__name__, template_folder='template', static_folder='static')
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # The template routes display the HTML pages
 @app.route('/')
