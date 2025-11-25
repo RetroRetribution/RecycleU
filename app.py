@@ -12,7 +12,7 @@ rewards_col = db["rewards"]
 redeem_col = db["redeem"]
 street_col = db["street"]
 
-app = Flask(__name__, template_folder='template', static_folder='static')
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # The template routes display the HTML pages
 @app.route('/')
@@ -130,6 +130,35 @@ def api_about():
         "description": "A simple recycling gamification app.",
         "contact": "support@recycleu.app"
     })
+
+from flask import Flask, render_template, request, redirect, url_for
+
+@app.route('/redemption/<int:reward_id>', methods=['GET', 'POST'])
+def redemption(reward_id):
+    if request.method == 'POST':
+        fullname = request.form.get('fullname')
+        email = request.form.get('email')
+        address = request.form.get('address')
+        payment_method = request.form.get('payment_method')
+        card_number = request.form.get('card_number')
+        cvv = request.form.get('cvv')
+
+        # TODO: Insert into database when ready
+        print("Redemption submitted:")
+        print("Name:", fullname)
+        print("Email:", email)
+        print("Address:", address)
+        print("Payment method:", payment_method)
+
+        return redirect(url_for('redemption_success', name=fullname))
+
+    return render_template('redemption.html', reward_id=reward_id)
+
+
+@app.route('/redemption-success')
+def redemption_success():
+    name = request.args.get('name', 'User')
+    return render_template('redemption_success.html', name=name)
 
 
 if __name__ == '__main__':

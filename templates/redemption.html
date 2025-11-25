@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reward Redemption</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/redemption.css') }}">
+</head>
+<body>
+
+<div class="redemption-container">
+
+    <h1>Reward Redemption</h1>
+    <p class="subtitle">Confirm your details to redeem reward #{{ reward_id }}</p>
+
+    <form id="redemptionForm" method="POST">
+
+        <label for="fullname">Full Name</label>
+        <input type="text" name="fullname" id="fullname" required>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required>
+
+        <label for="address">Shipping Address</label>
+        <textarea name="address" id="address" required></textarea>
+
+        <label for="payment_method">Payment Method</label>
+        <select name="payment_method" id="payment_method">
+            <option value="points">Use Points</option>
+            <option value="card">Pay with Card</option>
+        </select>
+
+        <div id="cardSection" class="hidden">
+            <label for="card_number">Card Number</label>
+            <input type="text" name="card_number" id="card_number" maxlength="16">
+
+            <label for="cvv">CVV</label>
+            <input type="text" name="cvv" id="cvv" maxlength="3">
+        </div>
+
+        <button type="submit" class="confirm-btn">Confirm Redemption</button>
+    </form>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/redemption.js') }}"></script>
+</body>
+</html>
