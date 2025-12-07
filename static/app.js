@@ -68,3 +68,45 @@ function fetchIndexData() {
         })
         .catch(error => console.error('Error fetching status:', error));
 }
+
+function registerUser() {
+    const nameInput = document.getElementById('name-input');
+    const emailInput = document.getElementById('email-input');
+    const passwordInput = document.getElementById('password-input');
+
+    if (!nameInput || !emailInput || !passwordInput) {
+        alert('Missing form elements');
+        return;
+    }
+
+    const payload = {
+        name: nameInput.value.trim(),
+        email: emailInput.value.trim(),
+        password: passwordInput.value
+    };
+
+    if (!payload.name || !payload.email || !payload.password) {
+        alert('Please fill name, email and password to register');
+        return;
+    }
+
+    fetch(`${API_BASE}/api/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(async res => {
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(body.error || `Status ${res.status}`);
+        return body;
+    })
+    .then(data => {
+        alert('Registration successful!');
+        // Optionally refresh profile area
+        fetchProfileData();
+    })
+    .catch(err => {
+        console.error('Register error', err);
+        alert('Registration failed: ' + err.message);
+    });
+}

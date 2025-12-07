@@ -1,13 +1,17 @@
 from pymongo import MongoClient
+from werkzeug.security import generate_password_hash
 import datetime
+import uuid
 
 client = MongoClient("mongodb://localhost:27017/")
 db = client["recycleU_db"]
 
+# Seed an initial user with randomized id and hashed password
 db.users.insert_one({
-    "id": 42,
+    "id": uuid.uuid4().hex,
     "name": "Alex Green",
     "email": "alex.green@example.com",
+    "password": generate_password_hash("password123"),
     "joined": "2024-06-01",
     "total_points": 1240,
     "badges": [

@@ -1,5 +1,7 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 from pymongo import MongoClient
+from werkzeug.security import generate_password_hash
+import uuid
 import datetime
 
 # After taking time to figure MongoDB out, the follwing is the MongoDB setup
@@ -65,6 +67,43 @@ def api_profile():
         return jsonify({"error": "No profile found"}), 404
 
     return jsonify(user)
+
+
+@app.route('/api/register', methods=['POST'])
+def api_register():
+    """Register a new user. Accepts JSON or form data: name, email, password."""
+    # Accept JSON body or form-encoded
+    data = request.get_json(silent=True) or request.form
+
+    name = data.get('name')
+    email = data.get('email')
+    password = data.get('password')
+
+    if not name or not email or not password:
+        return jsonify({"error": "name, email and password are required"}), 400
+
+    # Check for existing email
+    existing = users_col.find_one({"email": email})
+    if existing:
+        return jsonify({"error": "Email already registered"}), 409
+
+    user_id = uuid.uuid4().hex
+    hashed = generate_password_hash(password)
+    user_doc = {
+        "id": user_id,
+        "name": name,
+        "email": email,
+        "password": hashed,
+        "joined": datetime.datetime.utcnow().date().isoformat(),
+        "total_points": 0,
+        "badges": []
+    }
+
+    users_col.insert_one(user_doc)
+
+    # Don't return password hash to client
+    response = {k: v for k, v in user_doc.items() if k != 'password'}
+    return jsonify(response), 201
 
 
 
