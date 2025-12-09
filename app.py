@@ -22,9 +22,21 @@ app.secret_key = 'your-secret-key-here'
 def index():
     return render_template('index.html')
 
-@app.route('/profile')
-def profile_page():
-    return render_template('profile.html')
+@app.route('/api/profile')
+def api_profile():
+    # This checks if the user is logged in
+    if 'user_id' not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+    
+    user = users_col.find_one({"id": session['user_id']}, {"_id": 0})
+    
+    if not user:
+        session.clear()  # Invalid session is cleared off
+        return jsonify({"error": "User not found"}), 404
+    
+    # Remove password from response
+    user.pop('password', None)
+    return jsonify(user)
 
 @app.route('/points')
 def points_page():
