@@ -45,7 +45,9 @@ function displayProfileData(data, container) {
     container.innerHTML = html;
 }
 
-function handleLogin() {
+function handleLogin(event) {
+    if (event) event.preventDefault();
+
     const emailInput = document.getElementById('email-input');
     const passwordInput = document.getElementById('password-input');
 
@@ -54,10 +56,21 @@ function handleLogin() {
         return;
     }
 
+    // 🔐 if you have a real /api/login, you can call it here.
+    // For now, simple "login" + redirect is enough for routing:
 
     alert(`Login successful as ${emailInput.value}`);
     console.log('Login attempt with:', emailInput.value);
+
+    // ⬅️ IMPORTANT: redirect to the page you want after login
+    // If your Flask route is @app.route("/profile"):
+    window.location.href = "/profile";
+
+    // If instead you directly open the HTML file (no /profile route),
+    // use this variant instead:
+    // window.location.href = "/profile.html";
 }
+
 
 
 function fetchIndexData() {
