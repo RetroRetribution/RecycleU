@@ -2,7 +2,10 @@ const API_BASE = 'http://127.0.0.1:5000';
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetchProfileData();
+    // Only try to load the profile on the /profile page
+    if (window.location.pathname === '/profile') {
+        fetchProfileData();
+    }
 });
 
 function fetchProfileData() {
@@ -11,18 +14,28 @@ function fetchProfileData() {
 
     profileContent.innerHTML = '<p>Loading profile...</p>';
 
-    fetch(`${API_BASE}/api/profile`)
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return response.json();
-        })
-        .then(data => {
-            displayProfileData(data, profileContent);
-        })
-        .catch(error => {
-            profileContent.innerHTML = `<p style="color: red;">Error fetching profile: ${error.message}</p>`;
-            console.error('Fetch error:', error);
-        });
+    fetch(`${API_BASE}/api/profile`, {
+        credentials: 'include'
+    })
+    .then(response => {
+        if (response.status === 401 || response.status === 403) {
+            // not logged in -> go to login page
+            window.location.href = '/';
+            return Promise.reject(new Error('Not authenticated'));
+        }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        displayProfileData(data, profileContent);
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+        profileContent.innerHTML =
+            `<p style="color:red;">Error fetching profile: ${error.message}</p>`;
+    });
 }
 
 function displayProfileData(data, container) {
@@ -56,19 +69,33 @@ function handleLogin(event) {
         return;
     }
 
-    // 🔐 if you have a real /api/login, you can call it here.
-    // For now, simple "login" + redirect is enough for routing:
+    const payload = {
+        email: emailInput.value.trim(),
+        password: passwordInput.value
+    };
 
-    alert(`Login successful as ${emailInput.value}`);
-    console.log('Login attempt with:', emailInput.value);
+    fetch(`${API_BASE}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        credentials: 'include' // send session cookie
+    })
+    .then(async res => {
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(body.error || `Status ${res.status}`);
+        return body;
+    })
+    .then(data => {
+        alert(`Login successful as ${emailInput.value}`);
+        console.log('Logged in as:', data.email);
 
-    // ⬅️ IMPORTANT: redirect to the page you want after login
-    // If your Flask route is @app.route("/profile"):
-    window.location.href = "/profile";
-
-    // If instead you directly open the HTML file (no /profile route),
-    // use this variant instead:
-    // window.location.href = "/profile.html";
+        // 🔁 redirect to the protected profile page
+        window.location.href = '/profile';
+    })
+    .catch(err => {
+        console.error('Login error:', err);
+        alert('Login failed: ' + err.message);
+    });
 }
 
 

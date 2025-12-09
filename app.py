@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 import datetime
 
-# After taking time to figure MongoDB out, the follwing is the MongoDB setup
+
 client = MongoClient("mongodb://localhost:27017/")
 db = client["recycleU_db"]
 
@@ -14,105 +14,150 @@ rewards_col = db["rewards"]
 redeem_col = db["redeem"]
 street_col = db["street"]
 
-app = Flask(__name__, template_folder='templates', static_folder='static')
-app.secret_key = 'your-secret-key-here'
 
-# The template routes display the HTML pages
+app = Flask(__name__, template_folder='templates', static_folder='static')
+app.secret_key = 'your-secret-key-here'  # change for production
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/api/profile')
-def api_profile():
-    # This checks if the user is logged in
-    if 'user_id' not in session:
-        return jsonify({"error": "Not authenticated"}), 401
-    
-    user = users_col.find_one({"id": session['user_id']}, {"_id": 0})
-    
-    if not user:
-        session.clear()  # Invalid session is cleared off
-        return jsonify({"error": "User not found"}), 404
-    
-    # Remove password from response
-    user.pop('password', None)
-    return jsonify(user)
 
 @app.route('/points')
 def points_page():
     return render_template('points.html')
 
+
 @app.route('/rewards')
 def rewards_page():
     return render_template('rewards.html')
+
 
 @app.route('/redeem')
 def redeem_page():
     return render_template('redeem.html')
 
+
 @app.route('/qr')
 def qr_page():
     return render_template('qr.html')
+
 
 @app.route('/street')
 def street_page():
     return render_template('street.html')
 
+
 @app.route('/about')
 def about_page():
     return render_template('about.html')
 
-# The API routes provide JSON data to the fronted-end of website
+
+@app.route('/profile')
+def profile_page():
+    return render_template('profile.html')
+
+
+@app.route('/redemption/<int:reward_id>', methods=['GET', 'POST'])
+def redemption(reward_id):
+    if request.method == 'POST':
+        fullname = request.form.get('fullname')
+        email = request.form.get('email')
+        address = request.form.get('address')
+        payment_method = request.form.get('payment_method')
+        card_number = request.form.get('card_number')
+        cvv = request.form.get('cvv')
+
+        # TODO: Insert into database when ready
+        print("Redemption submitted:")
+        print("Name:", fullname)
+        print("Email:", email)
+        print("Address:", address)
+        print("Payment method:", payment_method)
+
+        return redirect(url_for('redemption_success', name=fullname))
+
+    return render_template('redemption.html', reward_id=reward_id)
+
+
+@app.route('/redemption-success')
+def redemption_success():
+    name = request.args.get('name', 'User')
+    return render_template('redemption_success.html', name=name)
+
 
 @app.route('/api/status')
 def api_status():
     return jsonify({"status": "running", "message": "API is operational"})
 
+
 @app.route('/api/dummy')
 def api_dummy():
     return jsonify({"message": "Hello from the backend!"})
 
+
 @app.route('/api/profile')
 def api_profile():
-    user = users_col.find_one({}, {"_id": 0})
+    """
+    Return the logged-in user's profile based on session['user_id'].
+    """
+    if 'user_id' not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+
+    user = users_col.find_one(
+        {"id": session['user_id']},
+        {"_id": 0, "password": 0}  # don't send _id or password
+    )
 
     if not user:
-        return jsonify({"error": "No profile found"}), 404
+        session.clear()
+        return jsonify({"error": "User not found"}), 404
 
     return jsonify(user)
 
+
 @app.route('/api/login', methods=['POST'])
 def api_login():
+    """
+    Log in a user with email + password.
+    """
     data = request.get_json(silent=True) or request.form
-    
+
     email = data.get('email')
     password = data.get('password')
-    
+
     if not email or not password:
         return jsonify({"error": "Email and password required"}), 400
-    
+
+    # Find user by email
     user = users_col.find_one({"email": email})
-    
+
+    # Check email + password
     if not user or not check_password_hash(user['password'], password):
         return jsonify({"error": "Invalid email or password"}), 401
-    
-    # Store user's ID in session
+
+    # Store user's ID and email in session
     session['user_id'] = user['id']
     session['user_email'] = user['email']
-    
-    # Return user data except for password
-    response = {k: v for k, v in user.items() if k != 'password'}
-    return jsonify(response)
+
+    # Return user data except for password and _id
+    response = {k: v for k, v in user.items() if k not in ['password', '_id']}
+    return jsonify(response), 200
+
 
 @app.route('/api/logout')
 def api_logout():
     session.clear()
-    return jsonify({"message": "Logged out"})
+    return jsonify({"message": "Logged out"}), 200
+
 
 @app.route('/api/register', methods=['POST'])
 def api_register():
-    """Register a new user. Accepts JSON or form data: name, email, password."""
-    # Accept JSON body or form-encoded
+    """
+    Register a new user. Accepts JSON or form data: name, email, password.
+    Rejects if email already exists (409).
+    """
     data = request.get_json(silent=True) or request.form
 
     name = data.get('name')
@@ -146,12 +191,11 @@ def api_register():
     return jsonify(response), 201
 
 
-
 @app.route('/api/points')
 def points():
-    # Fetch points data from MongoDB itself
+    # Fetch points data from MongoDB
     data = points_col.find_one({}, {"_id": 0})
-    
+
     if not data:
         # Dummy data as fallback if MongoDB is empty
         data = {
@@ -165,8 +209,9 @@ def points():
                 {"date": "2024-12-29", "change": "+140", "source": "Glass Recycling"},
             ]
         }
-    
+
     return jsonify(data)
+
 
 @app.route('/api/rewards')
 def api_rewards():
@@ -186,11 +231,12 @@ def api_redeem():
 
 @app.route('/api/qr')
 def qr():
-    # Dummy QR payload: in a real app you'd return a URL, this is for the sake of simplicity
+    # Dummy QR payload
     data = {
         "code": "QR_CODE_PLACEHOLDER_ABC123",
         "value": 50,
-        "expires": (datetime.datetime.utcnow() + datetime.timedelta(days=7)).isoformat() + 'Z'
+        "expires": (datetime.datetime.utcnow() +
+                    datetime.timedelta(days=7)).isoformat() + 'Z'
     }
     return jsonify(data)
 
@@ -210,34 +256,15 @@ def api_about():
         "contact": "support@recycleu.app"
     })
 
-from flask import Flask, render_template, request, redirect, url_for
 
-@app.route('/redemption/<int:reward_id>', methods=['GET', 'POST'])
-def redemption(reward_id):
-    if request.method == 'POST':
-        fullname = request.form.get('fullname')
-        email = request.form.get('email')
-        address = request.form.get('address')
-        payment_method = request.form.get('payment_method')
-        card_number = request.form.get('card_number')
-        cvv = request.form.get('cvv')
-
-        # TODO: Insert into database when ready
-        print("Redemption submitted:")
-        print("Name:", fullname)
-        print("Email:", email)
-        print("Address:", address)
-        print("Payment method:", payment_method)
-
-        return redirect(url_for('redemption_success', name=fullname))
-
-    return render_template('redemption.html', reward_id=reward_id)
-
-
-@app.route('/redemption-success')
-def redemption_success():
-    name = request.args.get('name', 'User')
-    return render_template('redemption_success.html', name=name)
+@app.route('/api/debug/clear_users')
+def debug_clear_users():
+    """
+    DEV ONLY: wipe all users. Use once if you get stuck,
+    then you can remove this route for submission if needed.
+    """
+    result = users_col.delete_many({})
+    return jsonify({"message": f"Deleted {result.deleted_count} user(s)."}), 200
 
 
 if __name__ == '__main__':

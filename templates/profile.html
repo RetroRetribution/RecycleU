@@ -1,31 +1,29 @@
 <!DOCTYPE html>
 <html>
- <head> <title> REcyclo Profile </title> <link rel="stylesheet" href="/static/profile.css">
- </head>
+<head>
+    <title>RecycleU Profile</title>
+    <!-- use Flask static path -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+</head>
 <body>
     <header>
         <h1 class="Logo">Test Logo</h1>
     </header>
     
     <div class="box">
-    
+
+        <!-- Optional static avatar -->
         <div class="pfp">
-            <img src="/pictures/Pfp.jpg">
-        </div>
-        
-        <div class="Point">
-            <h2>XXXX pts</h2>
-        </div>
-        
-        <div class="Usrnm">
-            <h3>Username: Your name</h3>
+            <img src="{{ url_for('static', filename='pictures/Pfp.jpg') }}" alt="Profile picture">
         </div>
 
-        <div class="Achievements">
-            <h4>Acheivements</h4>
+        <!-- 🔽 This is where JS will inject the real profile -->
+        <div id="profile-content">
+            <!-- Fallback text while JS loads -->
+            <p>Loading profile...</p>
         </div>
+
     </div>
-
 
     <footer>
         <div class="t1">
@@ -40,6 +38,7 @@
             <h3>About us</h3>
         </div>
     </footer>
-</body>
 
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
 </html>
