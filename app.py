@@ -1,6 +1,6 @@
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 from pymongo import MongoClient
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 import datetime
 
@@ -15,15 +15,28 @@ redeem_col = db["redeem"]
 street_col = db["street"]
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
+app.secret_key = 'your-secret-key-here'
 
 # The template routes display the HTML pages
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/profile')
-def profile_page():
-    return render_template('profile.html')
+@app.route('/api/profile')
+def api_profile():
+    # This checks if the user is logged in
+    if 'user_id' not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+    
+    user = users_col.find_one({"id": session['user_id']}, {"_id": 0})
+    
+    if not user:
+        session.clear()  # Invalid session is cleared off
+        return jsonify({"error": "User not found"}), 404
+    
+    # Remove password from response
+    user.pop('password', None)
+    return jsonify(user)
 
 @app.route('/points')
 def points_page():
@@ -68,6 +81,33 @@ def api_profile():
 
     return jsonify(user)
 
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    data = request.get_json(silent=True) or request.form
+    
+    email = data.get('email')
+    password = data.get('password')
+    
+    if not email or not password:
+        return jsonify({"error": "Email and password required"}), 400
+    
+    user = users_col.find_one({"email": email})
+    
+    if not user or not check_password_hash(user['password'], password):
+        return jsonify({"error": "Invalid email or password"}), 401
+    
+    # Store user's ID in session
+    session['user_id'] = user['id']
+    session['user_email'] = user['email']
+    
+    # Return user data except for password
+    response = {k: v for k, v in user.items() if k != 'password'}
+    return jsonify(response)
+
+@app.route('/api/logout')
+def api_logout():
+    session.clear()
+    return jsonify({"message": "Logged out"})
 
 @app.route('/api/register', methods=['POST'])
 def api_register():
