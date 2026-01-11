@@ -2,15 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Reward Redemption</title>
+    <title>Redeem {{ item.name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/redemption.css') }}">
 </head>
 <body>
 
 <div class="redemption-container">
 
-    <h1>Reward Redemption</h1>
-    <p class="subtitle">Confirm your details to redeem reward #{{ reward_id }}</p>
+    <h1>Confirm Redemption</h1>
+
+    <div class="item-preview">
+        <img src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+        <h2>{{ item.name }}</h2>
+        <div class="cost-badge">{{ item.cost }} Points</div>
+        <p style="color: #666; margin-top: 10px;">{{ item.desc }}</p>
+    </div>
 
     <form id="redemptionForm" method="POST">
 
@@ -25,7 +31,7 @@
 
         <label for="payment_method">Payment Method</label>
         <select name="payment_method" id="payment_method">
-            <option value="points">Use Points</option>
+            <option value="points">Use Points ({{ item.cost }} total)</option>
             <option value="card">Pay with Card</option>
         </select>
 
@@ -38,6 +44,9 @@
         </div>
 
         <button type="submit" class="confirm-btn">Confirm Redemption</button>
+        <div style="text-align: center; margin-top: 15px;">
+            <a href="{{ url_for('pages.redeem_page') }}" style="color: #888; text-decoration: none; font-size: 0.9em;">Cancel and go back</a>
+        </div>
     </form>
 
 </div>

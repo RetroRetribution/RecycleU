@@ -1,34 +1,53 @@
-header {
-    background-color: rgb(80, 122, 87);
+:root {
+  --fill: #82c89b;
+  --track: #d4d4d4;
+  --header-bg: #4a6b52;
+  --bg-color: #f6f8f4;
+  --ink: #334;
+  --muted: #6d876f;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding-top: 80px;
+    padding-bottom: 80px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--ink);
+}
+
+.header {
+    background-color: var(--header-bg);
+    color: white;
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%
-
-}
-
-body {
- padding-top: 70px;
- padding-bottom: 100px;
-}
-
-.Logo {
+    width: 100%;
+    height: 60px;
     display: flex;
     justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .h1 {
     text-align: center;
-    font-size: 36px;
-    color: black;
-    margin: 30px 0;
+    font-size: 28px;
+    margin: 20px 0;
+    color: var(--header-bg);
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  column-gap: 200px;
-  row-gap: 100px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    padding: 0 40px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .reward-item {
@@ -36,36 +55,77 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    background: transparent;
+    background: white;
+    text-decoration: none;
+    color: inherit;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e0eadd;
+}
+
+.reward-item:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transform: translateY(-5px);
 }
 
 .reward-item img {
-    width: 50px;
-    height: 50px;
+    width: 80px;
+    height: 80px;
     object-fit: cover;
     border-radius: 8px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .reward-text {
     font-size: 18px;
-    font-weight: bold;
-    color: #333;
+    font-weight: 700;
+    margin-bottom: 8px;
 }
 
-.footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: rgb(80, 122, 87);
-  color: black;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 10px 0;
+.cost-badge {
+    background-color: var(--fill);
+    color: #2f4f37;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+}
 
+.stock-status {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+.out-of-stock {
+    color: #c64d4d;
+    font-weight: bold;
+}
+
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #eef5f0;
+    border-top: 1px solid #d5e4d8;
+    z-index: 1000;
+}
+
+.nav-item {
+    color: var(--header-bg);
+    padding: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.nav-item.active {
+    color: #2f7d54;
+    border-bottom: 2px solid #2f7d54;
 }

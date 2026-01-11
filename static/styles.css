@@ -9,7 +9,7 @@ header {
 
 }
 body {
-    padding-top: 80px;
+    padding-top: 100px;
     background: url("/pictures/path-9261477_1920.png") no-repeat;
     background-size: cover;
 }
@@ -101,3 +101,14 @@ button {
         #profile-content {
             margin-top: 20px;
         }
+
+.footer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #eef5f0;
+  border-top: 1px solid #d5e4d8;
+}
