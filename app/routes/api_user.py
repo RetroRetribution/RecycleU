@@ -30,12 +30,26 @@ def register():
     if not name or not email or not password:
         return jsonify({"error": "name, email and password are required"}), 400
 
-    user = create_user(name, email, password)
-    if not user:
-        return jsonify({"error": "Email already registered"}), 409
+    try:
+        user = create_user(name, email, password)
+        if not user:
+            return jsonify({"error": "Email already registered"}), 409
 
-    response = {k: v for k, v in user.items() if k != 'password'}
-    return jsonify(response), 201
+        # ensure session value is JSON-safe (store as string)
+        user_id = user.get('id') or user.get('_id')
+        session['user_id'] = str(user_id)
+
+        # only return JSON-safe fields
+        response = {
+            "id": str(user_id),
+            "email": user.get('email'),
+            "name": user.get('name')
+        }
+        return jsonify(response), 201
+
+    except Exception as exc:
+        # avoid exposing internal error details; return JSON error for client
+        return jsonify({"error": "Internal server error"}), 500
 
 @user_api_bp.route('/logout')
 def logout():

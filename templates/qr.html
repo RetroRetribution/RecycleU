@@ -16,11 +16,13 @@
 
 <button class="scan-btn">Scan</button>
 
-<div class="bottom-nav">
-    <div>Map</div>
-    <div>Profile</div>
-    <div>Roads</div>
-</div>
+<nav class="bottom-nav">
+    <a href="{{ url_for('pages.rewards_page') }}" class="nav-item">Rewards</a>
+    
+    <a href="{{ url_for('pages.street_page') }}" class="nav-item">Map</a>
+    
+    <a href="{{ url_for('pages.about_page') }}" class="nav-item">About Us</a>
+</nav>
 
 </body>
 </html>

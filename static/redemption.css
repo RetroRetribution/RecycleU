@@ -1,84 +1,165 @@
-/* Container */
+/* Using the exact color palette from your redeem.css */
+:root {
+  --fill: #82c89b;
+  --track: #d4d4d4;
+  --header-bg: #4a6b52;
+  --bg-color: #f6f8f4;
+  --ink: #334;
+  --muted: #6d876f;
+  --white: #ffffff;
+  --border: #e0eadd;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--ink);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* --- Main Card Container --- */
 .redemption-container {
-    width: 420px;
-    margin: 50px auto;
+    background: var(--white);
+    width: 100%;
+    max-width: 450px;
     padding: 30px;
-    background: #ffffff;
-    border-radius: 14px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
-    font-family: 'Poppins', sans-serif;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--border);
 }
 
-/* Headings */
-.redemption-container h1 {
-    font-size: 26px;
+h1 {
     text-align: center;
-    margin-bottom: 10px;
-    color: #2c3e50;
-}
-
-.subtitle {
-    text-align: center;
-    font-size: 14px;
-    color: #7f8c8d;
+    color: var(--header-bg);
+    margin-top: 0;
+    font-size: 24px;
     margin-bottom: 25px;
 }
 
-/* Labels */
-label {
-    font-weight: 600;
-    font-size: 14px;
-    margin-top: 15px;
-    display: block;
-    color: #34495e;
+/* --- Item Preview Section --- */
+.item-preview {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed var(--track);
 }
 
-/* Inputs, textarea, select */
-input,
+.item-preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 2px solid var(--border);
+}
+
+.item-preview h2 {
+    margin: 10px 0 5px;
+    font-size: 18px;
+    color: var(--ink);
+}
+
+.cost-badge {
+    display: inline-block;
+    background-color: var(--fill);
+    color: #2f4f37;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* --- Form Styles --- */
+form#redemptionForm {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    margin-top: 15px;
+    color: var(--header-bg);
+    font-size: 0.9em;
+}
+
+input[type="text"],
+input[type="email"],
 textarea,
 select {
     width: 100%;
-    padding: 10px 12px;
-    margin-top: 5px;
-    border: 1.5px solid #d0d7de;
-    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid var(--track);
+    border-radius: 6px;
     font-size: 14px;
-    transition: 0.2s border-color;
-    outline: none;
-    font-family: 'Poppins', sans-serif;
+    font-family: inherit;
+    color: var(--ink);
+    background-color: #fafcfb;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-    border-color: #1abc9c;
+    outline: none;
+    border-color: var(--header-bg);
+    background-color: var(--white);
+    box-shadow: 0 0 0 3px rgba(74, 107, 82, 0.1);
 }
 
-/* Hidden card section */
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* --- Conditional Card Section --- */
+#cardSection {
+    background-color: #f0f7f2;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    border: 1px solid var(--fill);
+    transition: all 0.3s ease;
+}
+
+/* This class is toggled by your JS */
 .hidden {
     display: none;
 }
 
-/* Button */
+/* --- Buttons and Links --- */
 .confirm-btn {
-    width: 100%;
-    padding: 12px;
     margin-top: 25px;
-    background: #1abc9c;
-    border: none;
-    border-radius: 10px;
+    background-color: var(--header-bg);
     color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.2s background;
+    transition: background-color 0.2s;
+    width: 100%;
 }
 
 .confirm-btn:hover {
-    background: #17a589;
+    background-color: #3d5844;
 }
 
-/* Card Section */
-#cardSection {
+.redemption-container a {
+    display: inline-block;
     margin-top: 15px;
+    color: var(--muted);
+    font-size: 0.9em;
+    transition: color 0.2s;
+}
+
+.redemption-container a:hover {
+    color: var(--header-bg);
 }

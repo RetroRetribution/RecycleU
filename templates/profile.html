@@ -25,19 +25,13 @@
 
     </div>
 
-    <footer>
-        <div class="t1">
-            <h1>rewards</h1>
-        </div>
-
-        <div class="t2">
-            <h2>map</h2>
-        </div>
-
-        <div class="t3">
-            <h3>About us</h3>
-        </div>
-    </footer>
+    <nav class="bottom-nav">
+    <a href="{{ url_for('pages.rewards_page') }}" class="nav-item">Rewards</a>
+    
+    <a href="{{ url_for('pages.street_page') }}" class="nav-item">Map</a>
+    
+    <a href="{{ url_for('pages.about_page') }}" class="nav-item">About Us</a>
+</nav>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>

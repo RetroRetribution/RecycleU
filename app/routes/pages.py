@@ -15,15 +15,15 @@ def points_page():
 def profile_page():
     return render_template('profile.html')
 
-@pages_bp.route('/rewards')
+@pages_bp.route('/rewardss')
 def rewards_page():
-    return render_template('rewards.html')
+    return render_template('rewardss.html')
 
-@pages_bp.route('/redeem')
+@pages_bp.route('/rewards')
 def redeem_page():
     rewards_list = list(rewards_col().find({}, {"_id": 0}))
     # pass the list to the template as `items` so the Jinja template can iterate over it
-    return render_template('redeem.html', items=rewards_list)
+    return render_template('rewards.html', items=rewards_list)
 
 @pages_bp.route('/qr')
 def qr_page():
@@ -39,7 +39,6 @@ def about_page():
 
 @pages_bp.route('/redemption/<reward_id>', methods=['GET', 'POST'])
 def redemption(reward_id):
-    # Ensure this matches your numeric ID field in Compass
     item = rewards_col().find_one({"id": reward_id}, {"_id": 0})
     
     if not item:

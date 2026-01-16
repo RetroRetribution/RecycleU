@@ -13,5 +13,6 @@ def login():
     if not user or not check_password_hash(user['password'], data.get('password')):
         return jsonify({"error": "Invalid credentials"}), 401
 
-    session['user_id'] = user['id']
-    return jsonify({"id": user['id'], "email": user['email']})
+    # store as string to ensure JSON-safe session
+    session['user_id'] = str(user.get('id') or user.get('_id'))
+    return jsonify({"id": str(user.get('id') or user.get('_id')), "email": user['email']})

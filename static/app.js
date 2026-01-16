@@ -89,7 +89,7 @@ function handleLogin(event) {
         alert(`Login successful as ${emailInput.value}`);
         console.log('Logged in as:', data.email);
 
-        // 🔁 redirect to the protected profile page
+        // redirect to the protected profile page
         window.location.href = '/profile';
     })
     .catch(err => {
@@ -133,6 +133,7 @@ function registerUser() {
     fetch(`${API_BASE}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(payload)
     })
     .then(async res => {
@@ -141,9 +142,9 @@ function registerUser() {
         return body;
     })
     .then(data => {
-        alert('Registration successful!');
-        // Optionally refresh profile area
-        fetchProfileData();
+        alert('Registration successful welcome' + data.name);
+        // redirect to protected profile page (now authenticated)
+        window.location.href = '/profile';
     })
     .catch(err => {
         console.error('Register error', err);

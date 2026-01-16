@@ -56,27 +56,36 @@ h2 {
     background: #6bb887; /* slightly darker */
 }
 
-/* Bottom Navigation */
 .bottom-nav {
     position: fixed;
-    bottom: 0;
-    width: 100%;
+    bottom: 0; 
+    left: 0; 
+    right: 0;
     height: 60px;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-top: 1px solid #d5e4d8; /* soft line */
-    background: #eef5f0; /* very soft pale green */
+    background: #eef5f0;
+    border-top: 1px solid #d5e4d8;
+    z-index: 1000;
 }
 
-.bottom-nav div {
+.nav-item {
+    color: var(--header-bg);
+    padding: 6px 12px;
+    text-decoration: none;
+    font-weight: 600;
     font-size: 16px;
     cursor: pointer;
-    padding: 6px;
-    color: #4a6b52;
-    transition: 0.25s;
+    transition: color 0.2s, border-bottom 0.2s;
 }
 
-.bottom-nav div:hover {
-    color: #2f7d54; /* deeper natural green on hover */
+.nav-item:hover {
+    color: #2f7d54;
+    text-decoration: none;
+}
+
+.nav-item.active {
+    color: #2f7d54;
+    border-bottom: 2px solid #2f7d54;
 }
