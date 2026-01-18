@@ -18,7 +18,7 @@
         <p style="color: #666; margin-top: 10px;">{{ item.desc }}</p>
     </div>
 
-    <form id="redemptionForm" method="POST">
+    <form id="redemptionForm">
 
         <label for="fullname">Full Name</label>
         <input type="text" name="fullname" id="fullname" required>
@@ -45,12 +45,36 @@
 
         <button type="submit" class="confirm-btn">Confirm Redemption</button>
         <div style="text-align: center; margin-top: 15px;">
-            <a href="{{ url_for('pages.redeem_page') }}" style="color: #888; text-decoration: none; font-size: 0.9em;">Cancel and go back</a>
+            <a href="{{ url_for('pages.rewards_page') }}" style="color: #888; text-decoration: none; font-size: 0.9em;">Cancel and go back</a>
         </div>
     </form>
 
 </div>
 
-<script src="{{ url_for('static', filename='js/redemption.js') }}"></script>
+<script>
+document.getElementById('redemptionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(document.getElementById('redemptionForm'));
+
+    try {
+        const response = await fetch(window.location.href, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            window.location.href = response.url;
+        } else {
+            const error = await response.json();
+            alert('Redemption failed: ' + error.error);
+        }
+    } catch (err) {
+        console.error('Error:', err);
+        alert('An error occurred. Please try again.');
+    }
+});
+</script>
+
 </body>
 </html>

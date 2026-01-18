@@ -40,12 +40,12 @@
 </main>
 
 <!-- Bottom Navigation -->
-<div class="bottom-nav">
-  <div class="nav-item">Map</div>
-  <div class="nav-item">Profile</div>
-  <div class="nav-item">Rewards</div>
-  <div class="nav-item active">About</div>
-</div>
+<nav class="bottom-nav">
+  <a href="{{ url_for('pages.street_page') }}" class="nav-item">Map</a>
+  <a href="{{ url_for('pages.profile_page') }}" class="nav-item">Profile</a>
+  <a href="{{ url_for('pages.rewards_page') }}" class="nav-item">Rewards</a>
+  <a href="{{ url_for('pages.about_page') }}" class="nav-item active">About</a>
+</nav>
 
 </body>
 </html>

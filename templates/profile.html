@@ -2,36 +2,33 @@
 <html>
 <head>
     <title>RecycleU Profile</title>
-    <!-- use Flask static path -->
     <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
 </head>
 <body>
     <header>
         <h1 class="Logo">Test Logo</h1>
+        
+        <div class="header-nav">
+            <a href="{{ url_for('pages.qr_page') }}" class="nav-btn">QR</a>
+            <a href="{{ url_for('pages.recycle_page') }}" class="nav-btn">Recycle</a>
+        </div>
     </header>
     
     <div class="box">
-
-        <!-- Optional static avatar -->
         <div class="pfp">
             <img src="{{ url_for('static', filename='pictures/Pfp.jpg') }}" alt="Profile picture">
         </div>
-
-        <!-- 🔽 This is where JS will inject the real profile -->
         <div id="profile-content">
-            <!-- Fallback text while JS loads -->
             <p>Loading profile...</p>
         </div>
-
     </div>
 
     <nav class="bottom-nav">
-    <a href="{{ url_for('pages.rewards_page') }}" class="nav-item">Rewards</a>
-    
-    <a href="{{ url_for('pages.street_page') }}" class="nav-item">Map</a>
-    
-    <a href="{{ url_for('pages.about_page') }}" class="nav-item">About Us</a>
-</nav>
+        <a href="{{ url_for('pages.rewards_page') }}" class="nav-item">Rewards</a>
+        <a href="{{ url_for('pages.street_page') }}" class="nav-item">Map</a>
+        <a href="{{ url_for('pages.profile_page') }}" class="nav-item active">Profile</a>
+        <a href="{{ url_for('pages.about_page') }}" class="nav-item">About</a>
+    </nav>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>

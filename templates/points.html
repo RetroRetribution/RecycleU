@@ -87,5 +87,14 @@
   </script>
 
   <script src="{{ url_for('static', filename='points.js') }}"></script>
+  <nav class="bottom-nav">
+    <a href="{{ url_for('pages.rewards_page') }}" class="nav-item">Rewards</a>
+    
+    <a href="{{ url_for('pages.street_page') }}" class="nav-item">Map</a>
+    
+    <a href="{{ url_for('pages.profile_page') }}" class="nav-item">Profile</a>
+    
+    <a href="{{ url_for('pages.about_page') }}" class="nav-item">About</a>
+  </nav>
 </body>
 </html>

@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from app.db import rewards_col
+from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
+from app.db import rewards_col, users_col, activities_col
+from app.services.user_service import process_redemption, process_earning
 
 pages_bp = Blueprint('pages', __name__)
 
@@ -16,13 +17,12 @@ def profile_page():
     return render_template('profile.html')
 
 @pages_bp.route('/rewardss')
-def rewards_page():
+def rewardss_page():
     return render_template('rewardss.html')
 
 @pages_bp.route('/rewards')
-def redeem_page():
+def rewards_page():
     rewards_list = list(rewards_col().find({}, {"_id": 0}))
-    # pass the list to the template as `items` so the Jinja template can iterate over it
     return render_template('rewards.html', items=rewards_list)
 
 @pages_bp.route('/qr')
@@ -45,10 +45,53 @@ def redemption(reward_id):
         return "Reward not found", 404
 
     if request.method == 'POST':
-        fullname = request.form.get('fullname')
-        return redirect(url_for('pages.redemption_success', name=fullname))
+    
+        delivery_data = {
+            "fullname": request.form.get('fullname'),
+            "email": request.form.get('email'),
+            "address": request.form.get('address')
+        }
+        payment_method = request.form.get('payment_method')
+        
+        user_id = session.get('user_id', 'test_user_01')
+        user = users_col().find_one({"id": user_id})
+
+        if payment_method == 'points':
+            user_points = user.get('total_points', 0) if user else 0
+            item_cost = int(item.get('cost', 0))
+            
+            if user_points < item_cost:
+                return jsonify({"error": f"Insufficient points. You have {user_points}, need {item_cost}."}), 400
+
+        process_redemption(user_id, item, delivery_data, payment_method)
+
+        return redirect(url_for('pages.redemption_success', name=delivery_data['fullname']))
         
     return render_template('redemption.html', item=item)
+
+@pages_bp.route('/recycle', methods=['GET', 'POST'])
+def recycle_page():
+    activities = list(activities_col().find({}, {"_id": 0}))
+
+    if request.method == 'POST':
+        activity_id = request.form.get('activity_id')
+        points_to_add = request.form.get('points_value')
+        user_id = session.get('user_id', 'test_user_01') 
+
+        process_earning(user_id, activity_id, points_to_add)
+        
+        print(f"Added {points_to_add} points to {user_id} for {activity_id}")
+        
+        return redirect(url_for('pages.recycle_page'))
+
+    user_id = session.get('user_id', 'test_user_01')
+    user_points = 0
+    if user_id:
+        user = users_col().find_one({"id": user_id}, {"_id": 0})
+        if user:
+            user_points = user.get('total_points', 0)
+
+    return render_template('recycle.html', activities=activities, user_points=user_points)
 
 @pages_bp.route('/redemption-success')
 def redemption_success():

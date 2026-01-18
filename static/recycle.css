@@ -1,0 +1,129 @@
+:root {
+  --fill: #82c89b;
+  --header-bg: #4a6b52;
+  --bg-color: #f6f8f4;
+  --ink: #334;
+  --muted: #6d876f;
+  --white: #ffffff;
+}
+
+body {
+    margin: 0;
+    padding-top: 80px;
+    padding-bottom: 80px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--ink);
+}
+
+.header {
+    background-color: var(--header-bg);
+    color: white;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 60px;
+    display: flex; justify-content: center; align-items: center;
+    font-weight: 700; z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.h1 {
+    text-align: center;
+    font-size: 28px;
+    margin: 20px 0 10px;
+    color: var(--header-bg);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    padding: 0 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* --- Card / Button Styling --- */
+.activity-form {
+    display: contents; /* Allows the button to sit directly in the grid */
+}
+
+.reward-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: var(--white);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e0eadd;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    
+    /* Reset button default styles */
+    appearance: none;
+    font-family: inherit;
+    width: 100%;
+}
+
+.reward-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.reward-item:active {
+    transform: scale(0.98);
+}
+
+.reward-item img {
+    width: 80px; height: 80px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.reward-text {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--ink);
+}
+
+/* --- Badge Styling --- */
+.cost-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Specific style for EARNING (Darker green/gold) */
+.earn-badge {
+    background-color: #ffd700; /* Gold color for earning */
+    color: #5c4d00;
+}
+
+/* --- Footer --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #eef5f0;
+    border-top: 1px solid #d5e4d8;
+    z-index: 1000;
+}
+
+.nav-item {
+    color: var(--header-bg);
+    padding: 6px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.nav-item.active {
+    color: #2f7d54;
+    border-bottom: 2px solid #2f7d54;
+}

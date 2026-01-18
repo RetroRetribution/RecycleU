@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <title>Earn Points - REcyclo</title> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='recycle.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">REcyclo</div>
+        <div class="points-display">Your Points: <strong>{{ user_points }}</strong></div>
+        </header>
+
+    <main class="content">
+        <h1 class="h1">Log Recycling</h1>
+        <p style="text-align:center; color: #6d876f; margin-bottom: 20px;">
+            Tap an item to log it and earn points immediately.
+        </p>
+    
+        <div class="grid">
+            {% for activity in activities %}
+            <form method="POST" action="{{ url_for('pages.recycle_page') }}" class="activity-form">
+                
+                <input type="hidden" name="activity_id" value="{{ activity.id }}">
+                <input type="hidden" name="points_value" value="{{ activity.points }}">
+
+                <button type="submit" class="reward-item activity-card">
+                    <img src="{{ url_for('static', filename=activity.img) }}" alt="{{ activity.name }}" 
+                         onerror="this.src='https://placehold.co/100x100?text=Recycle'">
+                    
+                    <div class="reward-text">{{ activity.name }}</div>
+                    
+                    <div class="cost-badge earn-badge">+{{ activity.points }} Points</div>
+                </button>
+            </form>
+            {% endfor %}
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="{{ url_for('pages.rewards_page') }}" class="nav-item">Rewards</a>
+        <a href="{{ url_for('pages.street_page') }}" class="nav-item">Map</a>
+        <a href="{{ url_for('pages.recycle_page') }}" class="nav-item active">Earn</a>
+        <a href="{{ url_for('pages.profile_page') }}" class="nav-item">Profile</a>
+    </nav>
+
+</body>
+</html>

@@ -35,9 +35,10 @@
     </main>
 
     <nav class="bottom-nav">
-        <div class="nav-item">Map</div>
-        <div class="nav-item">Profile</div>
-        <div class="nav-item active">Rewards</div>
+        <a href="{{ url_for('pages.street_page') }}" class="nav-item">Map</a>
+        <a href="{{ url_for('pages.profile_page') }}" class="nav-item">Profile</a>
+        <a href="{{ url_for('pages.rewards_page') }}" class="nav-item active">Rewards</a>
+        <a href="{{ url_for('pages.about_page') }}" class="nav-item">About</a>
     </nav>
 
     <script src="{{ url_for('static', filename='rewards.js') }}"></script>

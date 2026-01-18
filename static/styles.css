@@ -1,20 +1,17 @@
-header {
-    background-color: rgb(80, 122, 87);
-    display: flex;
-    justify-content: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%
-
-}
-body {
-    padding-top: 100px;
-    background: url("/pictures/path-9261477_1920.png") no-repeat;
-    background-size: cover;
+.header {
+  background: #4a6b52;
+  color: #fff;
+  padding: 14px;
+  font-weight: 700;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
-.Logo {
+.logo {
     display: flex;
     justify-content: center;
 }
@@ -26,6 +23,12 @@ body {
     justify-content: center;
     align-items: center;
     min-height: calc(100vh - 80px);
+    background-image: url('/static/pictures/path-9261477_1920.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: "Segoe UI", Arial, sans-serif;
 }
 
 .box {
@@ -102,13 +105,3 @@ button {
             margin-top: 20px;
         }
 
-.footer {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: 60px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  background: #eef5f0;
-  border-top: 1px solid #d5e4d8;
-}

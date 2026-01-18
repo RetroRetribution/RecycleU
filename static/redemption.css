@@ -163,3 +163,41 @@ textarea {
 .redemption-container a:hover {
     color: var(--header-bg);
 }
+
+.success-box {
+            width: 420px;
+            margin: 60px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .success-box h1 {
+            font-size: 26px;
+            color: #2ecc71;
+            margin-bottom: 10px;
+        }
+
+        .success-box p {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #1abc9c;
+            color: white;
+            font-weight: 600;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #17a589;
+        }

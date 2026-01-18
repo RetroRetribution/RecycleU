@@ -9,6 +9,7 @@ def profile():
     if 'user_id' not in session:
         return jsonify({"error": "Not authenticated"}), 401
 
+   
     user = users_col().find_one(
         {"id": session['user_id']},
         {"_id": 0, "password": 0}
@@ -35,11 +36,11 @@ def register():
         if not user:
             return jsonify({"error": "Email already registered"}), 409
 
-        # ensure session value is JSON-safe (store as string)
+
         user_id = user.get('id') or user.get('_id')
         session['user_id'] = str(user_id)
 
-        # only return JSON-safe fields
+
         response = {
             "id": str(user_id),
             "email": user.get('email'),
@@ -48,7 +49,7 @@ def register():
         return jsonify(response), 201
 
     except Exception as exc:
-        # avoid exposing internal error details; return JSON error for client
+
         return jsonify({"error": "Internal server error"}), 500
 
 @user_api_bp.route('/logout')

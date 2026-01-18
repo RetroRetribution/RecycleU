@@ -17,22 +17,19 @@ def points_col():
 def rewards_col():
     return db["rewards"]
 
-def redeem_col():
-    return db["redeem"]
+def activities_col():
+    return db["activities"]
 
 def street_col():
     return db["street"]
 
 def recycle_events_col():
-    """Return the recycle_events collection."""
     return db["recycle_events"]
 
 
 def badges_col():
-    """Return the badges collection."""
     return db["badges"]
 
 
 def transactions_col():
-    """Return the transactions collection."""
     return db["transactions"]
