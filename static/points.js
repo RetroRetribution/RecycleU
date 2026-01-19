@@ -12,7 +12,9 @@ function updatePoint(percent, stage) {
     setStage(stage);
 
     const levelMap = { sprout: 1, sapling: 2, tree: 3 };
-    level.textContent = levelMap[stage] || 1;
+    if (level) {
+        level.textContent = levelMap[stage] || 1;
+    }
 
     currentPercent = clamped;
     currentStage = stage;
@@ -20,49 +22,86 @@ function updatePoint(percent, stage) {
 
 function setStage(stage) {
     const ring = document.getElementById("ring");
-    ring.setAttribute("data-stage", stage);
+    if (ring) {
+        ring.setAttribute("data-stage", stage);
+    }
 }
 
-function addPoints(amount) {
+function addVisualPoints(amount) {
     let newPercent = currentPercent + amount;
     let newStage = currentStage;
 
-    if (newPercent >= 75) newStage = "tree";
+    if (newPercent >= 90) newStage = "tree";
     else if (newPercent >= 40) newStage = "sapling";
     else newStage = "sprout";
 
     updatePoint(newPercent, newStage);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const ring = document.getElementById("ring");
-    ring.style.setProperty("--progress", "0deg");
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
     setTimeout(() => {
-        updatePoint(currentPercent, currentStage);
-    }, 100);
-});
+        toast.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
 
 document.addEventListener("DOMContentLoaded", () => {
+
     const ring = document.getElementById("ring");
-    ring.style.setProperty("--progress", "0deg");
-    setTimeout(() => {
-        updatePoint(currentPercent, currentStage);
-    }, 100);
+    if (ring) {
+        ring.style.setProperty("--progress", "0deg");
+        setTimeout(() => {
+            updatePoint(currentPercent, currentStage);
+        }, 100);
+    }
 
-    // Button bindings
-    document.getElementById("sproutBtn").addEventListener("click", () => {
-        updatePoint(10, "sprout");
-    });
+    // (Moved from HTML)
+    document.querySelectorAll('.point-controls button').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const points = parseInt(this.getAttribute('data-points'));
+            const btnId = this.id;
 
-    document.getElementById("saplingBtn").addEventListener("click", () => {
-        updatePoint(50, "sapling");
-    });
+            const stageMap = {
+                'sproutBtn': { stage: 'sprout', percent: 25 },
+                'saplingBtn': { stage: 'sapling', percent: 55 },
+                'treeBtn': { stage: 'tree', percent: 95 },
+                'addBtn': null 
+            };
 
-    document.getElementById("treeBtn").addEventListener("click", () => {
-        updatePoint(90, "tree");
-    });
+            try {
+                const response = await fetch('/donate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ points: points })
+                });
 
-    document.getElementById("addBtn").addEventListener("click", () => {
-        addPoints(10);
+                const result = await response.json();
+
+                if (result.success) {
+                    if (stageMap[btnId]) {
+                        updatePoint(stageMap[btnId].percent, stageMap[btnId].stage);
+                    } else {
+                        addVisualPoints(points);
+                    }
+                    
+                    showToast(`Donated ${points} points!`, 'success');
+                } else {
+                    showToast('Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Network error occurred', 'error');
+            }
+        });
     });
 });

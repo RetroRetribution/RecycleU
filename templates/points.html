@@ -52,49 +52,22 @@
     <p class="about">This drop point grows as people contribute. Keep it going!</p>
   </main>
 
-<div class="point-controls">
-  <button id="sproutBtn">Sprout</button>
-  <button id="saplingBtn">Sapling</button>
-  <button id="treeBtn">Tree</button>
-  <button id="addBtn">+10 Points</button>
-</div>
-
-
-  <div class="bottom-nav">
-    <div class="nav-item">Map</div>
-    <div class="nav-item active">Profile</div>
-    <div class="nav-item">Rewards</div>
+  <div class="point-controls">
+    <button id="sproutBtn" data-points="10">Sprout</button>
+    <button id="saplingBtn" data-points="20">Sapling</button>
+    <button id="treeBtn" data-points="30">Tree</button>
+    <button id="addBtn" data-points="10">+10 Points</button>
   </div>
 
-  <!-- Minimal JS to update progress smoothly -->
-  <script>
-    function updatePoint(percent, stage) {
-      const ring = document.getElementById('ring');
-      const level = document.getElementById('level');
-      const clamped = Math.max(0, Math.min(100, percent));
-      const deg = (clamped / 100) * 360;
-      ring.style.setProperty('--progress', deg + 'deg');
-      ring.setAttribute('data-stage', stage);
-      level.textContent = stage === 'tree' ? 3 : stage === 'sapling' ? 2 : 1;
-    }
-
-    (function demoEaseIn(){
-      const ring = document.getElementById('ring');
-      const target = 220;
-      ring.style.setProperty('--progress', '0deg');
-      setTimeout(()=> ring.style.setProperty('--progress', target + 'deg'), 50);
-    })();
-  </script>
-
-  <script src="{{ url_for('static', filename='points.js') }}"></script>
   <nav class="bottom-nav">
     <a href="{{ url_for('pages.rewards_page') }}" class="nav-item">Rewards</a>
-    
     <a href="{{ url_for('pages.street_page') }}" class="nav-item">Map</a>
-    
     <a href="{{ url_for('pages.profile_page') }}" class="nav-item">Profile</a>
-    
     <a href="{{ url_for('pages.about_page') }}" class="nav-item">About</a>
   </nav>
+
+  <div id="toast-container"></div>
+
+  <script src="{{ url_for('static', filename='points.js') }}"></script>
 </body>
 </html>

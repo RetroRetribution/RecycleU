@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
 from app.db import rewards_col, users_col, activities_col
 from app.services.user_service import process_redemption, process_earning
+import datetime
 
 pages_bp = Blueprint('pages', __name__)
 
@@ -97,3 +98,25 @@ def recycle_page():
 def redemption_success():
     name = request.args.get('name', 'User')
     return render_template('redemption_success.html', name=name)
+
+@pages_bp.route('/donate', methods=['POST'])
+def donate_points():
+    data = request.get_json()
+    points_to_donate = int(data.get('points', 0))
+    
+    user_id = session.get('user_id', 'test_user_01')
+
+    from app.db import points_col
+    donation = {
+        "user_id": user_id,
+        "points": points_to_donate,
+        "timestamp": datetime.datetime.utcnow()
+    }
+    points_col().insert_one(donation)
+
+    total_donated = points_col().aggregate([
+        {"$group": {"_id": None, "total": {"$sum": "$points"}}}
+    ])
+    total = list(total_donated)[0]["total"] if total_donated else 0
+
+    return jsonify({"success": True, "message": f"Donated {points_to_donate} points!", "community_total": total})

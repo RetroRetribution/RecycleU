@@ -9,6 +9,7 @@
         <h1 class="Logo">Test Logo</h1>
         
         <div class="header-nav">
+            <a href="{{ url_for('pages.profile_page') }}" class="nav-btn">Profile</a>
             <a href="{{ url_for('pages.qr_page') }}" class="nav-btn">QR</a>
             <a href="{{ url_for('pages.recycle_page') }}" class="nav-btn">Recycle</a>
         </div>
@@ -20,6 +21,10 @@
         </div>
         <div id="profile-content">
             <p>Loading profile...</p>
+        </div>
+        <div class="donation-message">
+            <p>Want to help grow your community? Donate your points to drop points to help make a real environmental impact in your area.</p>
+            <a href="{{ url_for('pages.points_page') }}" class="donate-link">Go to Drop Points →</a>
         </div>
     </div>
 

@@ -28,17 +28,29 @@ def seed():
 
     #POINTS
     if points_col().count_documents({}) == 0:
-        points_col().insert_one({
-            "total": 1240,
-            "earned": 1500,
-            "spent": 260,
-            "history": [
-                {"date": "2025-01-14", "change": "+200", "source": "Bottle Return"},
-                {"date": "2025-01-10", "change": "+150", "source": "Paper Recycling"},
-                {"date": "2025-01-08", "change": "-100", "source": "Reward Purchase"},
-                {"date": "2024-12-29", "change": "+140", "source": "Glass Recycling"},
-            ]
-        })
+        user = users_col().find_one({})
+        points_col().insert_many([
+            {
+                "user_id": user["id"] if user else "test_user_01",
+                "points": 200,
+                "timestamp": datetime.datetime(2025, 1, 14)
+            },
+            {
+                "user_id": user["id"] if user else "test_user_01",
+                "points": 150,
+                "timestamp": datetime.datetime(2025, 1, 10)
+            },
+            {
+                "user_id": user["id"] if user else "test_user_01",
+                "points": 140,
+                "timestamp": datetime.datetime(2024, 12, 29)
+            },
+            {
+                "user_id": user["id"] if user else "test_user_01",
+                "points": 100,
+                "timestamp": datetime.datetime(2024, 12, 15)
+            }
+        ])
         print("Points seeded")
 
     #REWARDS
