@@ -151,3 +151,18 @@ function registerUser() {
         alert('Registration failed: ' + err.message);
     });
 }
+
+function handleLogout() {
+    fetch(`${API_BASE}/api/logout`, {
+        credentials: 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Logged out successfully');
+        window.location.href = '/';
+    })
+    .catch(err => {
+        console.error('Logout error:', err);
+        alert('Logout failed: ' + err.message);
+    });
+}
