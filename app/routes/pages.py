@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
 import datetime
 
-from app.db import rewards_col, users_col, activities_col, points_col
+from app.db import rewards_col, users_col, activities_col, points_col, street_col
 from app.services.user_service import process_redemption, process_earning
 
 
@@ -14,7 +14,6 @@ pages_bp = Blueprint('pages', __name__)
 def _get_current_user_id():
     """
     Prefer session user; otherwise fall back to the first seeded user.
-    This keeps everything working even without auth/login.
     """
     user_id = session.get("user_id")
     if user_id:
@@ -37,8 +36,8 @@ def index():
 
 @pages_bp.route('/points')
 def points_page():
-    # legacy/static points page (your real drop-point view is /drop-point/<id>)
-    return render_template('points.html')
+    # Pass location_id=1 so the page knows where to assign points
+    return render_template('points.html', location_id=1, location_name="Millennium City Mall")
 
 
 @pages_bp.route('/profile')
@@ -83,7 +82,7 @@ def drop_point_page(location_id):
 
 
 # ----------------------------
-# Redemption
+# Redemption (Spends Points)
 # ----------------------------
 @pages_bp.route('/redemption/<reward_id>', methods=['GET', 'POST'])
 def redemption(reward_id):
@@ -116,7 +115,7 @@ def redemption(reward_id):
                     "error": f"Insufficient points. You have {user_points}, need {item_cost}."
                 }), 400
 
-        # Keep your teammate's service logic untouched
+        # process_redemption logic handles the deduction
         process_redemption(user_id, item, delivery_data, payment_method)
 
         return redirect(url_for('pages.redemption_success', name=delivery_data['fullname']))
@@ -131,7 +130,7 @@ def redemption_success():
 
 
 # ----------------------------
-# Recycling
+# Recycling (EARNS Points)
 # ----------------------------
 @pages_bp.route('/recycle', methods=['GET', 'POST'])
 def recycle_page():
@@ -145,7 +144,7 @@ def recycle_page():
         if not user_id:
             return "No user found. Run seeder.py", 500
 
-        # Keep service logic untouched
+        # process_earning logic handles ADDING points to the user
         process_earning(user_id, activity_id, points_to_add)
 
         print(f"Added {points_to_add} points to {user_id} for {activity_id}")
@@ -163,99 +162,100 @@ def recycle_page():
 
 
 # ----------------------------
-# Donations (community pool)
+# Drop Points (Community Donation)
 # ----------------------------
 @pages_bp.route('/donate', methods=['POST'])
 def donate_points():
+    """Simple donation route (optional)"""
     data = request.get_json(force=True) or {}
     points_to_donate = int(data.get('points', 0))
 
     user_id = _get_current_user_id()
-    if not user_id:
-        return jsonify({"success": False, "error": "No user found"}), 500
-
+    
+    # Just add to community pool
     donation = {
-        "user_id": user_id,
+        "user_id": user_id if user_id else "anonymous",
         "points": points_to_donate,
         "reason": "donation",
         "timestamp": datetime.datetime.utcnow()
     }
     points_col().insert_one(donation)
 
-    total_donated = points_col().aggregate([
-        {"$match": {"reason": "donation"}},
-        {"$group": {"_id": None, "total": {"$sum": "$points"}}}
-    ])
-    total_list = list(total_donated)
-    total = total_list[0]["total"] if total_list else 0
-
     return jsonify({
         "success": True,
-        "message": f"Donated {points_to_donate} points!",
-        "community_total": total
-    })
-
-
-# ----------------------------
-# Unified Points API (Mongo-backed)
-# This replaces points_store completely.
-# Drop points + profile + redemption all read the same wallet: users.total_points
-# ----------------------------
-@pages_bp.route("/api/points", methods=["GET"])
-def api_get_points():
-    user_id = _get_current_user_id()
-    if not user_id:
-        return jsonify({"error": "No user found. Run seeder.py"}), 500
-
-    user = users_col().find_one({"id": user_id}, {"_id": 0, "id": 1, "total_points": 1})
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-
-    return jsonify({
-        "user_id": user["id"],
-        "total": int(user.get("total_points", 0))
+        "message": f"Donated {points_to_donate} points!"
     })
 
 
 @pages_bp.route("/api/points/add", methods=["POST"])
 def api_add_points():
+   # Handle adding points via API (either QR scan or Drop Point)
+   #If the reason is "qr_upload", points go to user's personal wallet.
+   #If the reason is "drop_point", points go to community bank for that location and for now, do not affect user's personal wallet.
     payload = request.get_json(force=True) or {}
 
     location_id = int(payload.get("location_id", 0))
-    delta = int(payload.get("delta", 0))
+    points = int(payload.get("points", 0))
     reason = payload.get("reason", "drop_point")
 
-    if location_id <= 0:
-        return jsonify({"error": "location_id required"}), 400
-    if delta == 0:
-        return jsonify({"error": "delta must be non-zero"}), 400
+    if points <= 0:
+        return jsonify({"error": "points must be greater than 0"}), 400
 
     user_id = _get_current_user_id()
     if not user_id:
-        return jsonify({"error": "No user found. Run seeder.py"}), 500
+        return jsonify({"error": "No user found"}), 404
 
-    user = users_col().find_one({"id": user_id}, {"_id": 0, "total_points": 1})
-    if not user:
-        return jsonify({"error": "User not found"}), 404
+    if reason == "qr_upload":
+        process_earning(user_id, "qr_scan", points)
+        
+        user = users_col().find_one({"id": user_id})
+        new_total = user.get("total_points", 0)
 
-    current_total = int(user.get("total_points", 0))
-    if delta < 0 and current_total + delta < 0:
-        return jsonify({"error": "Insufficient points", "total": current_total}), 409
+        return jsonify({
+            "success": True, 
+            "message": f"Earned {points} points!",
+            "total": new_total
+        })
 
-    # Update wallet
-    users_col().update_one({"id": user_id}, {"$inc": {"total_points": delta}})
+    else:
+        if location_id <= 0:
+            return jsonify({"error": "location_id required for drop points"}), 400
 
-    # Optional log (useful for history later)
-    points_col().insert_one({
-        "user_id": user_id,
-        "points": delta,
-        "reason": reason,
-        "location_id": location_id,
-        "timestamp": datetime.datetime.utcnow()
-    })
+        # Insert DIRECTLY into Community Points Collection (User wallet unchanged)
+        points_col().insert_one({
+            "user_id": user_id,
+            "points": points,
+            "reason": reason,
+            "location_id": location_id,
+            "timestamp": datetime.datetime.utcnow()
+        })
 
-    updated = users_col().find_one({"id": user_id}, {"_id": 0, "total_points": 1})
+        return jsonify({
+            "success": True, 
+            "message": "Added to community bank",
+            "location_id": location_id
+        })
+
+@pages_bp.route("/api/points/location/<int:location_id>", methods=["GET"])
+def api_get_location_total(location_id):
+    """
+    Returns the total community points accumulated at this specific location.
+    """
+    pipeline = [
+        {"$match": {"location_id": location_id}},
+        {"$group": {"_id": None, "total": {"$sum": "$points"}}}
+    ]
+    
+    result = list(points_col().aggregate(pipeline))
+    total_points = result[0]["total"] if result else 0
+    
     return jsonify({
-        "user_id": user_id,
-        "total": int(updated.get("total_points", 0))
+        "location_id": location_id, 
+        "total": total_points
     })
+
+
+@pages_bp.route("/api/street", methods=["GET"])
+def api_get_street():
+    locations = list(street_col().find({}, {"_id": 0}))
+    return jsonify(locations)

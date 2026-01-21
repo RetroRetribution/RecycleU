@@ -32,24 +32,26 @@ def seed():
         points_col().insert_many([
             {
                 "user_id": user["id"] if user else "test_user_01",
-                "points": 200,
-                "timestamp": datetime.datetime(2025, 1, 14)
+                "points": 20,
+                "reason": "drop_point",
+                "location_id": 1,
+                "timestamp": datetime(2026, 12, 15, 14, 30, 0, 123000)
             },
             {
                 "user_id": user["id"] if user else "test_user_01",
-                "points": 150,
-                "timestamp": datetime.datetime(2025, 1, 10)
-            },
+                "points": 30,
+                "reason": "drop_point",
+                "location_id": 2,
+                "timestamp": datetime(2026, 1, 21, 18, 59, 18, 465000)
+},
             {
                 "user_id": user["id"] if user else "test_user_01",
-                "points": 140,
-                "timestamp": datetime.datetime(2024, 12, 29)
-            },
-            {
-                "user_id": user["id"] if user else "test_user_01",
-                "points": 100,
-                "timestamp": datetime.datetime(2024, 12, 15)
+                "points": 50,
+                "reason": "drop_point",
+                "location_id": "3",
+                "timestamp": datetime(2026, 3, 10, 9, 15, 45, 789000)
             }
+
         ])
         print("Points seeded")
 
@@ -149,15 +151,37 @@ def seed():
         ])
         print("Activities seeded")
 
-    #STREET LOCATIONS
+    # STREET LOCATIONS
     if street_col().count_documents({}) == 0:
         street_col().insert_many([
-            {"name": "City Recycle Center", "address": "Main Street 12", "hours": "09:00–18:00"},
-            {"name": "Eco Drop-Off Point", "address": "Green Ave 44", "hours": "10:00–16:00"},
+            {
+                "id": 1,
+                "name": "Millennium City Mall",
+                "lat": 48.2108,
+                "lng": 16.3725,
+                "address": "Central Vienna",
+                "hours": "09:00–18:00"
+            },
+            {
+                "id": 2,
+                "name": "Central Station",
+                "lat": 48.1850,
+                "lng": 16.3747,
+                "address": "Hbf Area",
+                "hours": "10:00–16:00"
+            },
+            {
+                "id": 3,
+                "name": "Riverside Park",
+                "lat": 48.2167,
+                "lng": 16.3950,
+                "address": "Danube Side",
+                "hours": "Always open"
+            }
         ])
         print("Street locations seeded")
 
-    # NEW: RECYCLE EVENTS
+    # RECYCLE EVENTS
     if recycle_events_col().count_documents({}) == 0:
         user = users_col().find_one({})
         recycle_events_col().insert_many([

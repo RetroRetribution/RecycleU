@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     result.style.opacity = "1";
   }
 
-  async function addPoints(delta) {
+  async function addPoints(points) {
     // Default location for QR uploads (can be improved later)
     const locationId = 1;
 
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         location_id: locationId,
-        delta: delta,
+        points: points,
         reason: "qr_upload"
       })
     });

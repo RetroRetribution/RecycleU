@@ -1,10 +1,4 @@
 // Hardcoded demo drop points (stable IDs that match /drop-point/<id>)
-const DROP_POINTS = [
-  { id: 1, name: "Millennium City Mall", lat: 48.2108, lng: 16.3725, address: "Central Vienna", hours: "09:00–18:00" },
-  { id: 2, name: "Central Station",      lat: 48.1850, lng: 16.3747, address: "Hbf Area",      hours: "10:00–16:00" },
-  { id: 3, name: "Riverside Park",       lat: 48.2167, lng: 16.3950, address: "Danube Side",   hours: "Always open" }
-];
-
 function haversineKm(a, b) {
   const R = 6371;
   const toRad = d => (d * Math.PI) / 180;
@@ -25,12 +19,14 @@ function setNearestUI(point, distKm) {
   const metaEl = document.getElementById("nearestMeta");
   const btnEl = document.getElementById("nearestBtn");
 
-  if (nameEl) nameEl.textContent = point.name;
-  if (metaEl) metaEl.textContent = `${point.address} • ${point.hours} • ~${distKm.toFixed(1)} km away`;
-  if (btnEl) btnEl.href = `/drop-point/${point.id}`;
+  if (point) {
+      if (nameEl) nameEl.textContent = point.name;
+      if (metaEl) metaEl.textContent = `${point.address} • ${point.hours} • ~${distKm.toFixed(1)} km away`;
+      if (btnEl) btnEl.href = `/drop-point/${point.id}`;
+  }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // Center on Vienna-ish by default
   const map = L.map("map").setView([48.2082, 16.3738], 13);
 
@@ -40,6 +36,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }).addTo(map);
 
   // Add markers
+  let DROP_POINTS = [];
+  try {
+    const response = await fetch('/api/street');
+    if (response.ok) {
+        DROP_POINTS = await response.json();
+    } else {
+        console.error("Failed to fetch street data");
+    }
+  } catch (err) {
+    console.error("Network error:", err);
+  }
+
+  // 3. Add markers (Logic is unchanged, just waits for data now)
   DROP_POINTS.forEach(p => {
     const m = L.marker([p.lat, p.lng]).addTo(map);
     m.bindPopup(`<b>${p.name}</b><br>${p.address}<br><a href="/drop-point/${p.id}">Open drop point</a>`);
@@ -49,15 +58,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Find nearest using geolocation
+  // 4. Find nearest geolocation
   if (!navigator.geolocation) {
     document.getElementById("nearestName").textContent = "Geolocation not available";
-    setNearestUI(DROP_POINTS[0], 0);
+    if (DROP_POINTS.length > 0) setNearestUI(DROP_POINTS[0], 0);
     return;
   }
 
   navigator.geolocation.getCurrentPosition(
     (pos) => {
+      if (DROP_POINTS.length === 0) return;
+
       const user = { lat: pos.coords.latitude, lng: pos.coords.longitude };
       let best = DROP_POINTS[0];
       let bestD = haversineKm(user, best);
@@ -79,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     (err) => {
       console.warn("Geolocation failed:", err);
       document.getElementById("nearestName").textContent = "Location permission denied";
-      setNearestUI(DROP_POINTS[0], 0);
+      if (DROP_POINTS.length > 0) setNearestUI(DROP_POINTS[0], 0);
     },
     { enableHighAccuracy: true, timeout: 8000 }
   );
