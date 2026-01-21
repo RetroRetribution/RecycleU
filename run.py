@@ -1,32 +1,67 @@
 from flask import request, jsonify
-from points_store import get_user_points, add_points
+from datetime import datetime
 from app import create_app
+from app.db import init_db, users_col, points_col
 
 app = create_app()
+init_db(app)
 
-if __name__ == "__main__":
-    app.run(debug=True)
+def _get_demo_user():
+    # For now we use the first seeded user (Alex Green)
+    user = users_col().find_one({})
+    return user
 
-@app.get("/api/points")
+@app.route("/api/points", methods=["GET"])
 def api_get_points():
-    # For now: single demo user (no auth yet)
-    user_id = "demo"
-    user = get_user_points(user_id)
-    return jsonify(user)
+    user = _get_demo_user()
+    if not user:
+        return jsonify({"error": "No user found. Run seeder.py"}), 500
 
-@app.post("/api/points/add")
+    return jsonify({
+        "user_id": user["id"],
+        "total": int(user.get("total_points", 0))
+    })
+
+@app.route("/api/points/add", methods=["POST"])
 def api_add_points():
-    user_id = "demo"
-    payload = request.get_json(force=True) or {}
+    user = _get_demo_user()
+    if not user:
+        return jsonify({"error": "No user found. Run seeder.py"}), 500
 
-    location_id = int(payload.get("location_id", 0))
+    payload = request.get_json(force=True) or {}
+    location_id = payload.get("location_id", None)
     delta = int(payload.get("delta", 0))
     reason = payload.get("reason", "drop_point")
 
-    if location_id <= 0:
-        return jsonify({"error": "location_id required"}), 400
     if delta == 0:
         return jsonify({"error": "delta must be non-zero"}), 400
 
-    user = add_points(user_id=user_id, location_id=location_id, delta=delta, reason=reason)
-    return jsonify(user)
+    # Deduct protection (so redemption can't go negative)
+    current_total = int(user.get("total_points", 0))
+    if delta < 0 and current_total + delta < 0:
+        return jsonify({"error": "Insufficient points", "total": current_total}), 409
+
+    # Update user's total points
+    users_col().update_one(
+        {"id": user["id"]},
+        {"$inc": {"total_points": delta}}
+    )
+
+    # Log in points collection for history/audit
+    points_col().insert_one({
+        "user_id": user["id"],
+        "points": delta,
+        "reason": reason,
+        "location_id": location_id,
+        "timestamp": datetime.utcnow()
+    })
+
+    # Return updated total
+    updated = users_col().find_one({"id": user["id"]})
+    return jsonify({
+        "user_id": user["id"],
+        "total": int(updated.get("total_points", 0))
+    })
+
+if __name__ == "__main__":
+    app.run(debug=True)

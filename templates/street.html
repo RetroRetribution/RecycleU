@@ -2,26 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Street Map</title>
 
   <link rel="stylesheet" href="{{ url_for('static', filename='street.css') }}">
-
-  <!-- Leaflet CSS -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 </head>
 <body>
 
-<main class="street-page">
-  <section class="map-shell">
-    <div id="map" class="leaflet-map" aria-label="Interactive map"></div>
-  </section>
-</main>
+<div class="street-wrap">
+  <div class="nearest-card">
+    <div class="nearest-title">Nearest Drop Point</div>
+    <div id="nearestName" class="nearest-name">Finding your location…</div>
+    <div id="nearestMeta" class="nearest-meta"></div>
+    <a id="nearestBtn" class="nearest-btn" href="{{ url_for('pages.drop_point_page', location_id=1) }}">Open drop point</a>
+  </div>
+
+  <div id="map" class="map"></div>
+</div>
 
 <nav class="bottom-nav">
   <a href="{{ url_for('pages.qr_page') }}" class="nav-item">QR</a>
@@ -30,13 +28,7 @@
   <a href="{{ url_for('pages.about_page') }}" class="nav-item">About</a>
 </nav>
 
-<!-- Leaflet JS -->
-<script
-  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-  crossorigin=""
-></script>
-
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="{{ url_for('static', filename='street.js') }}"></script>
 </body>
 </html>

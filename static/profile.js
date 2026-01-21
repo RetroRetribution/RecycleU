@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const res = await fetch("/api/points");
       const data = await res.json();
-      el.textContent = String(data.total ?? 0);
+      document.getElementById("profilePoints").textContent = data.total;
+      console.log(data.total);
     } catch (e) {
       console.error("Failed to load points:", e);
     }

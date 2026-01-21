@@ -1,13 +1,109 @@
 {
   "users": {
     "demo": {
-      "total": 390,
+      "total": 550,
       "by_location": {
         "1": 160,
-        "3": 80,
+        "3": 240,
         "2": 150
       },
       "history": [
+        {
+          "ts": "2026-01-21T14:11:33.202959Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:33.028787Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:32.907392Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:32.741581Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:32.640452Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:32.426551Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:32.294008Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:32.196903Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:32.100808Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:32.025039Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:31.948281Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:31.859815Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:31.558991Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:31.496510Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:31.275305Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
+        {
+          "ts": "2026-01-21T14:11:30.782348Z",
+          "location_id": 3,
+          "delta": 10,
+          "reason": "drop_point"
+        },
         {
           "ts": "2026-01-21T02:49:20.174204Z",
           "location_id": 1,
