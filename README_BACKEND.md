@@ -12,7 +12,7 @@ Terminal run(PowerShell) :
 python -m venv env
 .\env\scripts\activate
 pip install -r requirements.txt
-python app.py
+python run.py
 ```
 
 Endpoints:

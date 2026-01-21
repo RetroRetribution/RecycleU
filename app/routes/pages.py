@@ -120,3 +120,16 @@ def donate_points():
     total = list(total_donated)[0]["total"] if total_donated else 0
 
     return jsonify({"success": True, "message": f"Donated {points_to_donate} points!", "community_total": total})
+
+@pages_bp.route("/drop-point/<int:location_id>")
+def drop_point_page(location_id):
+    names = {
+        1: "Millennium City Mall",
+        2: "Central Station",
+        3: "Riverside Park"
+    }
+    return render_template(
+        "points.html",
+        location_id=location_id,
+        location_name=names.get(location_id, "Drop Point")
+    )

@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QR Scanner</title>
-<link rel="stylesheet" href="/static/qr.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QR Scanner</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='qr.css') }}">
 </head>
 <body>
 
-<div class="logo">LOGO</div>
+<main class="qr-page">
+  <header class="qr-header">
+    <h1>Scan a QR Code</h1>
+    <p>Point your camera at a RecycleU QR code to earn points.</p>
+  </header>
 
-<h2>QR Scanner</h2>
+  <section class="qr-shell">
+    <div id="qr-reader" class="qr-reader"></div>
 
-<div class="qr-box">QR</div>
+    <div class="qr-upload">
+        <label class="upload-btn">
+          <span class="icon">📷</span>
+          Upload QR Image
+          <input id="qrFile" type="file" accept="image/*" hidden>
+        </label>
+      </div>
+      
 
-<button class="scan-btn">Scan</button>
+    <div id="scanResult" class="qr-result" aria-live="polite"></div>
+  </section>
+</main>
 
 <nav class="bottom-nav">
-    <a href="{{ url_for('pages.rewards_page') }}" class="nav-item">Rewards</a>
-    
-    <a href="{{ url_for('pages.street_page') }}" class="nav-item">Map</a>
-    
-    <a href="{{ url_for('pages.profile_page') }}" class="nav-item">Profile</a>
-    
-    <a href="{{ url_for('pages.about_page') }}" class="nav-item">About</a>
+  <a href="{{ url_for('pages.qr_page') }}" class="nav-item active">QR</a>
+  <a href="{{ url_for('pages.street_page') }}" class="nav-item">Map</a>
+  <a href="{{ url_for('pages.profile_page') }}" class="nav-item">Profile</a>
+  <a href="{{ url_for('pages.about_page') }}" class="nav-item">About</a>
 </nav>
+
+<!-- QR library (must come before qr.js) -->
+<script src="https://unpkg.com/html5-qrcode@2.3.10/minified/html5-qrcode.min.js"></script>
+<script src="{{ url_for('static', filename='qr.js') }}"></script>
 
 </body>
 </html>

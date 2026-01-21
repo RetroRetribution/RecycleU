@@ -1,47 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Street Map</title>
-<link rel="stylesheet" href="/static/street.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Street Map</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='street.css') }}">
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
 </head>
 <body>
 
-<div class="street-map-container">
-
-  <!-- Minimal Street Layout Map -->
-  <svg class="street-map-bg" viewBox="0 0 400 800" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100%" height="100%" fill="#bfc3c2" />
-
-    <!-- Main vertical road -->
-    <rect x="180" y="0" width="40" height="800" fill="#d8d8d8" rx="10"/>
-
-    <!-- Cross streets -->
-    <rect x="0" y="270" width="400" height="45" fill="#d8d8d8" rx="10"/>
-    <rect x="0" y="460" width="400" height="45" fill="#d8d8d8" rx="10"/>
-
-    <!-- Soft sidewalk highlight -->
-    <rect x="165" y="0" width="70" height="800" fill="rgba(255,255,255,0.18)" />
-  </svg>
-
-  <!-- Soft Green Aura -->
-  <div class="green-glow"></div>
-
-  <!-- Drop Pin -->
-  <div class="drop-pin"></div>
-
-</div>
+<main class="street-page">
+  <section class="map-shell">
+    <div id="map" class="leaflet-map" aria-label="Interactive map"></div>
+  </section>
+</main>
 
 <nav class="bottom-nav">
-    <a href="{{ url_for('pages.qr_page') }}" class="nav-item">QR Code</a>
-    
-    <a href="{{ url_for('pages.street_page') }}" class="nav-item active">Map</a>
-    
-    <a href="{{ url_for('pages.profile_page') }}" class="nav-item">Profile</a>
-    
-    <a href="{{ url_for('pages.about_page') }}" class="nav-item">About</a>
+  <a href="{{ url_for('pages.qr_page') }}" class="nav-item">QR</a>
+  <a href="{{ url_for('pages.street_page') }}" class="nav-item active">Map</a>
+  <a href="{{ url_for('pages.profile_page') }}" class="nav-item">Profile</a>
+  <a href="{{ url_for('pages.about_page') }}" class="nav-item">About</a>
 </nav>
 
+<!-- Leaflet JS -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+
+<script src="{{ url_for('static', filename='street.js') }}"></script>
 </body>
 </html>

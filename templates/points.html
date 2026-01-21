@@ -47,7 +47,10 @@
       </div>
     </div>
 
-    <h1 class="name">Millennium City Mall</h1>
+    <h1 class="name">
+      {{ location_name if location_name else "Millennium City Mall" }}
+    </h1>
+  
     <p class="rank">Community Level: <span id="level">2</span></p>
     <p class="about">This drop point grows as people contribute. Keep it going!</p>
   </main>
