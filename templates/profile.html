@@ -23,6 +23,8 @@
             <p>Loading profile...</p>
         </div>
         <div class="donation-message">
+            <p>Total Points: <span id="profilePoints">0</span></p>
+
             <p>Want to help grow your community? Log your recycling items at nearby drop points to bring awareness, and help make a real environmental impact in your area.</p>
             <a href="{{ url_for('pages.points_page') }}" class="donate-link">Go to Nearby Drop Point →</a>
         </div>
@@ -36,5 +38,7 @@
     </nav>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script src="{{ url_for('static', filename='profile.js') }}"></script>
+
 </body>
 </html>

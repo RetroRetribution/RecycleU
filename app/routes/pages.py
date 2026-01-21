@@ -2,6 +2,9 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from app.db import rewards_col, users_col, activities_col
 from app.services.user_service import process_redemption, process_earning
 import datetime
+from flask import request, jsonify
+from points_store import get_user_points, add_points
+
 
 pages_bp = Blueprint('pages', __name__)
 
@@ -123,13 +126,33 @@ def donate_points():
 
 @pages_bp.route("/drop-point/<int:location_id>")
 def drop_point_page(location_id):
-    names = {
-        1: "Millennium City Mall",
-        2: "Central Station",
-        3: "Riverside Park"
-    }
+    names = {1:"Millennium City Mall", 2:"Central Station", 3:"Riverside Park"}
     return render_template(
         "points.html",
         location_id=location_id,
         location_name=names.get(location_id, "Drop Point")
     )
+
+
+@pages_bp.route("/api/points", methods=["GET"])
+def api_get_points():
+    user_id = "demo"
+    user = get_user_points(user_id)
+    return jsonify(user)
+
+@pages_bp.route("/api/points/add", methods=["POST"])
+def api_add_points():
+    user_id = "demo"
+    payload = request.get_json(force=True) or {}
+
+    location_id = int(payload.get("location_id", 0))
+    delta = int(payload.get("delta", 0))
+    reason = payload.get("reason", "drop_point")
+
+    if location_id <= 0:
+        return jsonify({"error": "location_id required"}), 400
+    if delta == 0:
+        return jsonify({"error": "delta must be non-zero"}), 400
+
+    user = add_points(user_id=user_id, location_id=location_id, delta=delta, reason=reason)
+    return jsonify(user)

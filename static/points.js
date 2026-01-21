@@ -1,107 +1,103 @@
-let currentPercent = 55;
-let currentStage = "sapling";
-
-function updatePoint(percent, stage) {
-    const ring = document.getElementById("ring");
-    const level = document.getElementById("level");
-
-    const clamped = Math.max(0, Math.min(100, percent));
-    const deg = (clamped / 100) * 360;
-
-    ring.style.setProperty("--progress", deg + "deg");
-    setStage(stage);
-
-    const levelMap = { sprout: 1, sapling: 2, tree: 3 };
-    if (level) {
-        level.textContent = levelMap[stage] || 1;
-    }
-
-    currentPercent = clamped;
-    currentStage = stage;
-}
-
-function setStage(stage) {
-    const ring = document.getElementById("ring");
-    if (ring) {
-        ring.setAttribute("data-stage", stage);
-    }
-}
-
-function addVisualPoints(amount) {
-    let newPercent = currentPercent + amount;
-    let newStage = currentStage;
-
-    if (newPercent >= 90) newStage = "tree";
-    else if (newPercent >= 40) newStage = "sapling";
-    else newStage = "sprout";
-
-    updatePoint(newPercent, newStage);
-}
-
-function showToast(message, type = 'success') {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    container.appendChild(toast);
-
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10);
-
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-
-    const ring = document.getElementById("ring");
-    if (ring) {
-        ring.style.setProperty("--progress", "0deg");
-        setTimeout(() => {
-            updatePoint(currentPercent, currentStage);
-        }, 100);
+    const ringEl = document.getElementById("ring");
+    const levelEl = document.getElementById("level");
+  
+    const locationId = Number(document.body.dataset.locationId);
+  
+    if (!Number.isInteger(locationId) || locationId <= 0) {
+      console.error("Invalid/missing data-location-id on <body>:", document.body.dataset.locationId);
     }
-
-    // (Moved from HTML)
-    document.querySelectorAll('.point-controls button').forEach(btn => {
-        btn.addEventListener('click', async function() {
-            const points = parseInt(this.getAttribute('data-points'));
-            const btnId = this.id;
-
-            const stageMap = {
-                'sproutBtn': { stage: 'sprout', percent: 25 },
-                'saplingBtn': { stage: 'sapling', percent: 55 },
-                'treeBtn': { stage: 'tree', percent: 95 },
-                'addBtn': null 
-            };
-
-            try {
-                const response = await fetch('/donate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ points: points })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    if (stageMap[btnId]) {
-                        updatePoint(stageMap[btnId].percent, stageMap[btnId].stage);
-                    } else {
-                        addVisualPoints(points);
-                    }
-                    
-                    showToast(`Donated ${points} points!`, 'success');
-                } else {
-                    showToast('Error: ' + result.error, 'error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Network error occurred', 'error');
-            }
-        });
-    });
-});
+  
+    async function getPoints() {
+      const res = await fetch("/api/points");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to fetch points");
+      return data;
+    }
+  
+    async function addPoints(delta, reason = "drop_point") {
+      const res = await fetch("/api/points/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ location_id: locationId, delta, reason })
+      });
+  
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to add points");
+      return data;
+    }
+  
+    function toast(msg) {
+      const c = document.getElementById("toast-container");
+      if (!c) return;
+      const t = document.createElement("div");
+      t.className = "toast";
+      t.textContent = msg;
+      c.appendChild(t);
+      setTimeout(() => t.classList.add("show"), 10);
+      setTimeout(() => {
+        t.classList.remove("show");
+        setTimeout(() => t.remove(), 200);
+      }, 2000);
+    }
+  
+    // --- Growth logic per location ---
+    // Tune these thresholds however you like.
+    function computeStageAndLevel(locPoints) {
+      // Level by location points
+      // 0-49 = sprout (level 1)
+      // 50-149 = sapling (level 2)
+      // 150+ = tree (level 3)
+      if (locPoints >= 150) return { stage: "tree", level: 3 };
+      if (locPoints >= 50) return { stage: "sapling", level: 2 };
+      return { stage: "sprout", level: 1 };
+    }
+  
+    function setRingProgress(locPoints) {
+      // Map 0..150 points to 0..360 degrees (cap at 360)
+      const capped = Math.max(0, Math.min(150, locPoints));
+      const deg = Math.round((capped / 150) * 360);
+      if (ringEl) ringEl.style.setProperty("--progress", `${deg}deg`);
+    }
+  
+    function updateUI(userData) {
+      const byLoc = userData.by_location || {};
+      const locPoints = Number(byLoc[String(locationId)] || 0);
+  
+      const { stage, level } = computeStageAndLevel(locPoints);
+  
+      if (ringEl) ringEl.dataset.stage = stage;
+      if (levelEl) levelEl.textContent = String(level);
+  
+      setRingProgress(locPoints);
+    }
+  
+    async function init() {
+      try {
+        const user = await getPoints();
+        updateUI(user);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  
+    async function handleAdd(delta, label) {
+      try {
+        const user = await addPoints(delta, "drop_point");
+        updateUI(user);
+        toast(`+${delta} points (${label})`);
+      } catch (e) {
+        console.error(e);
+        toast("Could not add points.");
+      }
+    }
+  
+    // Buttons (your HTML already uses these IDs)
+    document.getElementById("sproutBtn")?.addEventListener("click", () => handleAdd(10, "Sprout"));
+    document.getElementById("saplingBtn")?.addEventListener("click", () => handleAdd(20, "Sapling"));
+    document.getElementById("treeBtn")?.addEventListener("click", () => handleAdd(30, "Tree"));
+    document.getElementById("addBtn")?.addEventListener("click", () => handleAdd(10, "+10"));
+  
+    init();
+  });
+  

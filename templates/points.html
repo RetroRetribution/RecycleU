@@ -6,7 +6,8 @@
   <title>Drop Points</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='points.css') }}" />
 </head>
-<body>
+
+<body data-location-id="{{ location_id }}">
 
   <header class="header">
     <div class="logo">LOGO</div>
@@ -14,7 +15,7 @@
 
   <main class="content">
     <!-- Progress Ring -->
-    <div id="ring" class="progress-ring" style="--progress: 220deg;" data-stage="sapling">
+    <div id="ring" class="progress-ring" style="--progress: 0deg;" data-stage="sprout">
       <div class="icon">
         <!-- Sprout -->
         <svg class="sprout" viewBox="0 0 64 64" aria-hidden="true">
@@ -47,11 +48,9 @@
       </div>
     </div>
 
-    <h1 class="name">
-      {{ location_name if location_name else "Millennium City Mall" }}
-    </h1>
-  
-    <p class="rank">Community Level: <span id="level">2</span></p>
+    <h1 class="name">{{ location_name if location_name else "Drop Point" }}</h1>
+
+    <p class="rank">Community Level: <span id="level">1</span></p>
     <p class="about">This drop point grows as people contribute. Keep it going!</p>
   </main>
 
